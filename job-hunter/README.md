@@ -90,6 +90,16 @@ python -m jobhunter track list
 python -m jobhunter dashboard --open
 ```
 
+**No local LaTeX? Use Overleaf** (the website, or the VS Code "Overleaf Workshop" extension):
+
+1. Run `tailor <ID>` without `--pdf`. It still writes the `.tex` file.
+2. Paste that `.tex` into an Overleaf project and compile it there (the default pdfLaTeX compiler works).
+3. Download the PDF, then run the ATS check on it:
+
+   ```bash
+   python -m jobhunter check <ID> ~/Downloads/main.pdf
+   ```
+
 **What to do with `ats_report.md`:**
 
 - **Missing keywords**: if a keyword is genuinely true for you (a course, project or work task), add it to `profile.yaml` using the JD's exact wording, then run `tailor` again.

@@ -165,6 +165,23 @@ def cmd_build(a):
     print(f"PDF: {pdf}")
 
 
+def cmd_check(a):
+    """ATS-check a PDF compiled elsewhere (e.g. Overleaf) against a job's JD."""
+    _, prof, db = ctx()
+    job = score_job(db.get_job(a.id), prof)
+    pdf = Path(a.pdf).expanduser()
+    if not pdf.exists():
+        sys.exit(f"PDF not found: {pdf}")
+    cv, rep = tailor.tailor(prof, job)
+    res = ats.check(pdf, cv, rep["jd_keywords"], prof.lexicon)
+    report = pdf.parent / "ats_report.md"
+    report.write_text(ats.report_markdown(job.to_dict(), rep, res), encoding="utf-8")
+    for name, ok in res["checks"].items():
+        print(f"  [{'x' if ok else ' '}] {name}")
+    print(f"Keyword coverage in PDF text: {res['coverage']}%  | not found: {', '.join(res['absent']) or '-'}")
+    print(f"Report: {report}")
+
+
 def cmd_track(a):
     cfg, _, db = ctx()
     if a.action == "add":
@@ -238,6 +255,11 @@ def main(argv=None):
     s = sub.add_parser("build", help="compile a (hand-edited) .tex to PDF")
     s.add_argument("tex")
     s.set_defaults(fn=cmd_build)
+
+    s = sub.add_parser("check", help="ATS-check a PDF compiled elsewhere (e.g. Overleaf) against a job")
+    s.add_argument("id", help="job ID")
+    s.add_argument("pdf", help="path to the PDF")
+    s.set_defaults(fn=cmd_check)
 
     s = sub.add_parser("track", help="application tracker")
     s.add_argument("action", choices=["add", "update", "list"])
