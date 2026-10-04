@@ -95,7 +95,8 @@ def cmd_add(a):
     if a.url and not a.text_file:
         job = url_import.import_url(a.url)
     else:
-        text = Path(a.text_file).read_text(encoding="utf-8") if a.text_file else sys.stdin.read()
+        use_file = a.text_file and a.text_file != "-"
+        text = Path(a.text_file).read_text(encoding="utf-8") if use_file else sys.stdin.read()
         job = Job(source="manual", title=a.title or text.strip().splitlines()[0][:120], description=text, url=a.url or "")
     job.title = a.title or job.title
     job.company = a.company or job.company
