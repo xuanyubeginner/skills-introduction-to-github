@@ -1,0 +1,84 @@
+# Your CV as structured data — the single source of truth.
+# Copy to profile.yaml and replace everything with your real content.
+# The tailoring step only REORDERS / SELECTS / (optionally) REPHRASES what is here.
+# It never invents experience, so put every true bullet you might want to use below.
+
+name: Your Name
+headline: M.Sc. Data Science student | Data Analyst
+contact:
+  email: you@example.com
+  phone: "+49 123 456789"
+  location: Trier, Germany
+  linkedin: linkedin.com/in/yourname
+  github: github.com/yourname
+  # work_permit: "EU Blue Card eligible / valid German residence permit"  # recommended for non-EU candidates
+
+# What you are looking for (used for job-type filtering and the summary)
+target:
+  roles: [Data Analyst, Business Analyst, Data Scientist, BI Analyst]
+  job_types: [internship, working_student, full_time]   # internship | working_student | thesis | full_time
+  available_from: "2026-11"
+
+summary: >-
+  Data-driven master's student with hands-on experience in Python, SQL and Power BI,
+  building dashboards and analyses that support business decisions.
+
+# Every skill you can honestly defend in an interview. Group names become CV lines.
+skills:
+  Programming: [Python, SQL, R (language), Git]
+  Data & BI: [Power BI, Excel, Tableau, Data Visualization, Statistics]
+  Machine Learning: [Machine Learning, NLP]
+  Tools: [Jira, MS Office, SAP]
+
+languages:
+  - {name: English, level: C1}
+  - {name: German, level: B2}
+  - {name: Chinese, level: Native}
+
+experience:
+  - title: Working Student Data Analytics
+    company: Example GmbH
+    location: Trier, Germany
+    start: 2025-03
+    end: present
+    bullets:
+      - Built Power BI dashboards tracking 25 sales KPIs, cutting weekly reporting time by 6 hours.
+      - Wrote SQL queries and Python (pandas) scripts to clean and merge data from SAP and Excel sources.
+      - Presented findings to stakeholders in German and English, supporting pricing decisions.
+      - Automated Excel reports with VBA, reducing manual errors.
+  - title: Intern Business Analysis
+    company: Example S.A.
+    location: Luxembourg
+    start: 2024-06
+    end: 2024-09
+    bullets:
+      - Gathered requirements from 4 departments and documented processes in Confluence/Jira.
+      - Performed market research and competitive analysis for a new fund product.
+      - Supported agile project management in a Scrum team of 8.
+
+education:
+  - degree: M.Sc. Data Science
+    school: Universität Trier
+    location: Trier, Germany
+    start: 2024-10
+    end: 2026-09 (expected)
+    details: "Courses: Machine Learning, Statistics, Databases. Grade: 1.7"
+  - degree: B.Sc. Business Informatics
+    school: Example University
+    location: China
+    start: 2020-09
+    end: 2024-06
+    details: ""
+
+projects:
+  - name: Job-market NLP analysis
+    tech: [Python, NLP, scikit-learn]
+    bullets:
+      - Scraped and classified 5,000 job ads with a TF-IDF + logistic regression model (F1 0.87).
+  - name: Retail sales forecasting
+    tech: [Python, Machine Learning, Statistics]
+    bullets:
+      - Forecast weekly sales with gradient boosting, improving MAPE by 12% over baseline.
+
+certifications:
+  - Microsoft Certified - Power BI Data Analyst Associate (PL-300)

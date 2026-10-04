@@ -1,0 +1,7 @@
+# personal data — never commit
+config.yaml
+profile.yaml
+data/
+output/
+__pycache__/
+*.pyc

@@ -1,0 +1,76 @@
+%% ATS-friendly one-column CV. Jinja2 syntax with LaTeX-safe delimiters:
+%%   \VAR{expr}  -> value        \BLOCK{ for ... } ... \BLOCK{ endfor }  -> logic
+%%   |e escapes LaTeX special characters (& % $ # _ { } ~ ^ \).
+%% ATS rules followed: one column, no tables/icons/graphics for content, standard
+%% section names, real text (not images), unicode mapping so copy/paste & parsers work.
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{cmap}               % searchable/extractable text
+\input{glyphtounicode}\pdfgentounicode=1
+\usepackage[a4paper,margin=1.8cm,top=1.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\DisableLigatures[f]{encoding=*} % "fi"/"fl" ligatures can confuse some ATS parsers
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\titleformat{\section}{\large\bfseries}{}{0pt}{}[\titlerule]
+\titlespacing*{\section}{0pt}{9pt}{4pt}
+\setlist[itemize]{leftmargin=1.2em,itemsep=1pt,topsep=2pt,parsep=0pt}
+
+\hypersetup{pdftitle={\VAR{cv.name|e} - CV}, pdfauthor={\VAR{cv.name|e}}, pdfkeywords={\VAR{keywords|join(', ')|e}}}
+
+\begin{document}
+
+{\LARGE\bfseries \VAR{cv.name|e}}\\[2pt]
+\BLOCK{ if cv.headline }\VAR{cv.headline|e}\\[2pt]\BLOCK{ endif }
+\VAR{cv.contact.location|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.phone|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }
+\BLOCK{ if cv.contact.work_permit }\\ \VAR{cv.contact.work_permit|e}\BLOCK{ endif }
+
+\BLOCK{ if cv.summary }
+\section{Summary}
+\VAR{cv.summary|e}
+\BLOCK{ endif }
+
+\section{Skills}
+\BLOCK{ for group, items in cv.skills.items() }
+\textbf{\VAR{group|e}:} \VAR{items|join(', ')|e}\\
+\BLOCK{ endfor }
+\BLOCK{ if cv.languages }\textbf{Languages:} \BLOCK{ for l in cv.languages }\VAR{l.name|e} (\VAR{l.level|e})\BLOCK{ if not loop.last }, \BLOCK{ endif }\BLOCK{ endfor }\BLOCK{ endif }
+
+\section{Experience}
+\BLOCK{ for x in cv.experience }
+\textbf{\VAR{x.title|e}} -- \VAR{x.company|e}, \VAR{x.location|e} \hfill \VAR{x.start|e} -- \VAR{x.end|e}
+\begin{itemize}
+\BLOCK{ for b in x.bullets }  \item \VAR{b|e}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endfor }
+
+\BLOCK{ if cv.projects }
+\section{Projects}
+\BLOCK{ for p in cv.projects }
+\textbf{\VAR{p.name|e}}\BLOCK{ if p.tech } -- \textit{\VAR{p.tech|join(', ')|e}}\BLOCK{ endif }
+\begin{itemize}
+\BLOCK{ for b in p.bullets }  \item \VAR{b|e}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endfor }
+\BLOCK{ endif }
+
+\section{Education}
+\BLOCK{ for ed in cv.education }
+\textbf{\VAR{ed.degree|e}} -- \VAR{ed.school|e}, \VAR{ed.location|e} \hfill \VAR{ed.start|e} -- \VAR{ed.end|e}\\
+\BLOCK{ if ed.details }\VAR{ed.details|e}\\[3pt]\BLOCK{ endif }
+\BLOCK{ endfor }
+
+\BLOCK{ if cv.certifications }
+\section{Certifications}
+\begin{itemize}
+\BLOCK{ for c in cv.certifications }  \item \VAR{c|e}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endif }
+
+\end{document}

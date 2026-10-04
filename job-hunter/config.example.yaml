@@ -1,0 +1,44 @@
+# Copy to config.yaml and edit.
+
+search:
+  # Search terms (combined with every location below). English + German variants work best in DE.
+  keywords: ["Data Analyst", "Business Analyst", "Werkstudent Data", "Praktikum Data Analytics"]
+  # city or region names; countries are inferred per source
+  locations:
+    - {name: Trier, country: de, radius_km: 50}
+    - {name: Luxembourg, country: lu}
+    - {name: Saarbrücken, country: de, radius_km: 30}
+    - {name: Frankfurt am Main, country: de, radius_km: 30}
+  max_age_days: 21
+  results_per_query: 50
+  min_score: 35            # hide jobs below this match score (0-100)
+
+sources:
+  arbeitsagentur: {enabled: true}     # official German Federal Employment Agency API (free, includes many StepStone/Indeed jobs)
+  arbeitnow: {enabled: true}          # free Germany/EU job board API, good for English-speaking jobs
+  adzuna:                             # free API key at https://developer.adzuna.com (DE, AT, BE, FR, NL, ... no LU)
+    enabled: false
+    app_id: ""        # or env ADZUNA_APP_ID
+    app_key: ""       # or env ADZUNA_APP_KEY
+  jobspy:                             # optional: pip install python-jobspy — LinkedIn / Indeed / Google Jobs scraper.
+    enabled: false                    # Unofficial: may break or get rate-limited; use moderately, for personal use only.
+    sites: [linkedin, indeed, google]
+    linkedin_fetch_description: true
+
+# Prefilled search links (for sites without an open API) shown in the dashboard.
+# {q} = keyword, {loc} = location, both URL-encoded. Adjust if a site changes its URL scheme.
+search_links:
+  LinkedIn: "https://www.linkedin.com/jobs/search/?keywords={q}&location={loc}&f_TPR=r604800"
+  StepStone: "https://www.stepstone.de/jobs/{q_slug}/in-{loc_slug}?radius=30&sort=2"
+  Moovijob: "https://www.moovijob.com/offres-emploi?keywords={q}"
+  jobs.lu: "https://en.jobs.lu/SearchResults.aspx?Keywords={q}"
+  Google Jobs: "https://www.google.com/search?q={q}+jobs+{loc}&ibp=htl;jobs"
+  Indeed DE: "https://de.indeed.com/jobs?q={q}&l={loc}&fromage=14"
+
+tracker:
+  no_response_after_days: 21   # applications older than this without update count as "No Response"
+
+llm:
+  # Optional: Claude rewrites summary/bullets toward the JD (never invents facts). Needs ANTHROPIC_API_KEY.
+  model: claude-opus-5-5
+  effort: medium

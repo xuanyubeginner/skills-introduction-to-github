@@ -1,0 +1,88 @@
+# Canonical skill = alias, alias, ...   (case/umlaut-insensitive; EN / DE / FR)
+# Add your own lines freely; skills in profile.yaml are added automatically.
+
+# --- programming & data
+Python = python3, pandas, numpy
+R (language) = r programming, rstudio, programmiersprache r, r/shiny
+SQL = sql, mysql, postgresql, postgres, t-sql, pl/sql, sqlite
+Java
+JavaScript = javascript, js, node.js, nodejs
+TypeScript
+C++ = cpp
+C#
+Go (language) = golang
+MATLAB
+Scala
+Bash = shell scripting, linux shell
+Git = github, gitlab, version control, versionskontrolle
+Excel = microsoft excel, ms excel, advanced excel, vba, pivot tables, pivot
+Power BI = powerbi, power-bi, dax
+Tableau
+Looker
+SAP = sap erp, s/4hana, s4hana, sap fi, sap co, sap mm, sap sd
+Salesforce
+Jira = confluence
+Data Analysis = data analytics, data analyst, datenanalyse, analyse de donnees, analytics
+Data Visualization = datenvisualisierung, dashboarding, dashboards, visualisation des donnees
+Statistics = statistik, statistiques, statistical analysis, hypothesis testing, regression
+Machine Learning = maschinelles lernen, apprentissage automatique, ml, scikit-learn, sklearn
+Deep Learning = neural networks, neuronale netze, pytorch, tensorflow, keras
+NLP = natural language processing, text mining, llm, large language models
+Generative AI = genai, generative ki, prompt engineering, chatgpt, rag
+Computer Vision = opencv, image processing, bildverarbeitung
+Data Engineering = etl, elt, data pipelines, datenpipelines, airflow, dbt
+Big Data = spark, pyspark, hadoop, databricks
+Data Warehouse = data warehousing, snowflake, bigquery, redshift
+Cloud = cloud computing
+AWS = amazon web services
+Azure = microsoft azure
+GCP = google cloud, google cloud platform
+Docker = containerization
+Kubernetes = k8s
+CI/CD = continuous integration, jenkins, github actions
+REST API = restful, api development, apis
+Web Development = html, css, react, angular, vue
+Linux = unix
+Databases = database, datenbanken, bases de donnees, nosql, mongodb
+Agile = scrum, kanban, agil, agile methoden
+Software Testing = unit testing, pytest, testing, qa, quality assurance, qualitaetssicherung
+Cybersecurity = it security, it-sicherheit, informationssicherheit, iso 27001
+
+# --- business, finance, consulting
+Project Management = projektmanagement, gestion de projet, project coordination, projektkoordination
+Product Management = produktmanagement, product owner
+Business Analysis = business analyst, requirements engineering, anforderungsmanagement
+Process Optimization = prozessoptimierung, process improvement, lean, six sigma, kaizen
+Supply Chain = supply chain management, logistik, logistics, procurement, einkauf, beschaffung
+Controlling = financial controlling, management reporting
+Financial Analysis = finanzanalyse, financial modelling, financial modeling, valuation, bewertung
+Accounting = buchhaltung, rechnungswesen, comptabilite, ifrs, hgb, us gaap
+Audit = auditing, wirtschaftspruefung, revision, internal audit
+Risk Management = risikomanagement, gestion des risques, compliance
+Banking = banking industry, fund administration, fondsverwaltung, asset management, investment funds
+Marketing = online marketing, digital marketing, performance marketing, seo, sea, social media
+Market Research = marktforschung, market analysis, marktanalyse, competitive analysis
+Sales = vertrieb, business development, key account management
+CRM = customer relationship management, hubspot
+Consulting = beratung, conseil, unternehmensberatung
+Strategy = strategie, strategic planning, corporate strategy
+Reporting = berichtswesen, kpi, kpis, kpi reporting
+Stakeholder Management = stakeholder, stakeholder communication
+ESG = sustainability, nachhaltigkeit, csr
+
+# --- engineering / research
+CAD = autocad, solidworks, catia, siemens nx
+Simulation = ansys, finite element, fem, simulink
+Research = forschung, recherche, scientific research, literature review
+Laboratory = labor, lab experience
+
+# --- soft skills & languages (ATS often filters on these)
+Communication = kommunikation, kommunikationsfaehigkeit, communication skills
+Teamwork = teamfaehigkeit, team player, travail en equipe, teamarbeit
+Problem Solving = problemloesung, analytical thinking, analytisches denken, analytische faehigkeiten
+English = englisch, anglais, fluent english, english c1, business english
+German = deutsch, allemand, deutschkenntnisse
+French = franzoesisch, francais
+Chinese = mandarin, chinesisch, chinois
+Luxembourgish = luxemburgisch, luxembourgeois
+MS Office = microsoft office, office 365, powerpoint, ms word

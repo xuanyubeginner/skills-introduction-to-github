@@ -1,0 +1,7 @@
+requests>=2.31
+PyYAML>=6.0
+Jinja2>=3.1
+pypdf>=4.0
+# optional
+# anthropic>=0.70      # --llm rewrite with Claude
+# python-jobspy        # LinkedIn / Indeed / Google Jobs (unofficial)
