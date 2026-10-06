@@ -103,7 +103,7 @@
 \begin{document}
 
 %%---------- Heading ----------
-\BLOCK{ if cv.photo }\begin{minipage}[b]{\dimexpr\linewidth-2.8cm\relax}\BLOCK{ endif }
+\BLOCK{ if cv.photo }\begin{minipage}[t]{\dimexpr\linewidth-2.8cm\relax}\vspace{0pt}\BLOCK{ endif }
 {\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[8pt]
 \BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[4pt]\BLOCK{ endif }
 {\small \VAR{cv.contact.phone|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }}
@@ -112,7 +112,7 @@
 \BLOCK{ if cv.contact.nationality }\BLOCK{ set _ = personal.append('Nationality: ' ~ cv.contact.nationality) }\BLOCK{ endif }
 \BLOCK{ if cv.contact.work_permit }\BLOCK{ set _ = personal.append(cv.contact.work_permit) }\BLOCK{ endif }
 \BLOCK{ if personal }\\[2pt]{\small \VAR{personal|map('e')|join(' \\textbar{} ')}}\BLOCK{ endif }
-\BLOCK{ if cv.photo }\end{minipage}\hfill\begin{minipage}[b]{2.35cm}\includegraphics[width=2.3cm]{\VAR{cv.photo}}\end{minipage}\BLOCK{ endif }
+\BLOCK{ if cv.photo }\end{minipage}\hfill\begin{minipage}[t]{2.35cm}\vspace{0pt}\includegraphics[width=2.3cm]{\VAR{cv.photo}}\end{minipage}\BLOCK{ endif }
 \par\vspace{1mm}
 
 \BLOCK{ for s in (cv.section_order or ['profile', 'skills', 'experience', 'education', 'projects']) }
