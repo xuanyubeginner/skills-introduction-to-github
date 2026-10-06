@@ -190,3 +190,11 @@ def test_fit_to_exactly_one_page(tmp_path, extra_bullets):
     pdf, info = fit.fit_to_pages(ROOT / "templates" / "compact.tex.j2", cv, [], tmp_path / "cv.tex", pages=1)
     assert info["pages"] == 1 and len(fit.PdfReader(str(pdf)).pages) == 1
     assert bool(info["dropped"]) == (extra_bullets > 0)
+
+
+def test_compact_profile_moves_next_to_photo():
+    tex = render(ROOT / "templates" / "compact.tex.j2", dict(PROFILE.data, photo="me.png"), [])
+    assert tex.count(r"\section{Profile}") == 1
+    assert tex.index(r"\section{Profile}") < tex.index(r"\includegraphics") < tex.index(r"\section{Key Skills}")
+    tex = render(ROOT / "templates" / "compact.tex.j2", dict(PROFILE.data), [])
+    assert tex.count(r"\section{Profile}") == 1 and "includegraphics" not in tex
