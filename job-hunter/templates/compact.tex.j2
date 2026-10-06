@@ -108,31 +108,33 @@
 \begin{document}
 
 %%---------- Heading ----------
-%% Without a photo: contact details on one line. With a photo: one item per line
-%% (classic DE layout) and the photo is scaled to exactly the height of that block,
-%% so there is no white space next to or under it.
+%% Labelled contact + personal items packed on as few lines as possible. Items never
+%% split; when a line is full the next item moves down and the "|" at the break
+%% disappears (\discretionary).
+%% With a photo: name aligned with the photo's top edge, contact lines with its bottom edge.
 \BLOCK{ set order = cv.section_order or ['profile', 'skills', 'experience', 'education', 'projects'] }
-\BLOCK{ set items = [cv.contact.phone|e, '\\href{mailto:' ~ cv.contact.email ~ '}{' ~ (cv.contact.email|e) ~ '}', cv.contact.location|e] }
-\BLOCK{ if cv.contact.linkedin }\BLOCK{ set _ = items.append('\\href{https://' ~ cv.contact.linkedin ~ '}{' ~ (cv.contact.linkedin|e) ~ '}') }\BLOCK{ endif }
-\BLOCK{ if cv.contact.github }\BLOCK{ set _ = items.append('\\href{https://' ~ cv.contact.github ~ '}{' ~ (cv.contact.github|e) ~ '}') }\BLOCK{ endif }
+\BLOCK{ set sep = '\\discretionary{}{}{\\kern0.5em\\textbar\\kern0.5em}' }
+\BLOCK{ set items = ['\\mbox{Tel: ' ~ (cv.contact.phone|e) ~ '}',
+                     '\\mbox{Email: \\href{mailto:' ~ cv.contact.email ~ '}{' ~ (cv.contact.email|e) ~ '}}',
+                     '\\mbox{Address: ' ~ (cv.contact.location|e) ~ '}'] }
+\BLOCK{ if cv.contact.linkedin }\BLOCK{ set _ = items.append('\\mbox{LinkedIn: \\href{https://' ~ cv.contact.linkedin ~ '}{' ~ (cv.contact.linkedin|e) ~ '}}') }\BLOCK{ endif }
+\BLOCK{ if cv.contact.github }\BLOCK{ set _ = items.append('\\mbox{GitHub: \\href{https://' ~ cv.contact.github ~ '}{' ~ (cv.contact.github|e) ~ '}}') }\BLOCK{ endif }
 \BLOCK{ set personal = [] }
-\BLOCK{ if cv.contact.birth_date }\BLOCK{ set _ = personal.append('Date of birth: ' ~ (cv.contact.birth_date|e)) }\BLOCK{ endif }
-\BLOCK{ if cv.contact.nationality }\BLOCK{ set _ = personal.append('Nationality: ' ~ (cv.contact.nationality|e)) }\BLOCK{ endif }
-\BLOCK{ if cv.contact.work_permit }\BLOCK{ set _ = personal.append(cv.contact.work_permit|e) }\BLOCK{ endif }
+\BLOCK{ if cv.contact.birth_date }\BLOCK{ set _ = personal.append('\\mbox{Date of birth: ' ~ (cv.contact.birth_date|e) ~ '}') }\BLOCK{ endif }
+\BLOCK{ if cv.contact.nationality }\BLOCK{ set _ = personal.append('\\mbox{Nationality: ' ~ (cv.contact.nationality|e) ~ '}') }\BLOCK{ endif }
+\BLOCK{ if cv.contact.work_permit }\BLOCK{ set _ = personal.append('\\mbox{' ~ (cv.contact.work_permit|e) ~ '}') }\BLOCK{ endif }
+\BLOCK{ macro contact_lines() }{\bodyfont\raggedright \VAR{(items + personal)|join(sep)}\par}\BLOCK{ endmacro }
 \BLOCK{ if cv.photo }
-\newsavebox{\headbox}\newlength{\photoh}
-\savebox{\headbox}{\begin{minipage}[t]{\dimexpr\linewidth-3.0cm\relax}\vspace{0pt}
-{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[6pt]
-\BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[3pt]\BLOCK{ endif }
-{\bodyfont \VAR{(items + personal)|join('\\\\\n')}}
-\end{minipage}}
-\setlength{\photoh}{\dimexpr\ht\headbox+\dp\headbox\relax}
-\usebox{\headbox}\hfill\begin{minipage}[t]{2.8cm}\vspace{0pt}\raggedleft\includegraphics[height=\photoh,width=2.8cm,keepaspectratio]{\VAR{cv.photo}}\end{minipage}
+\begin{minipage}[t][\VAR{cv.photo_height or 2.6}cm][t]{\dimexpr\linewidth-3.0cm\relax}\vspace{0pt}
+{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}\par}
+\BLOCK{ if cv.headline }\vspace{3pt}{\normalsize \VAR{cv.headline|e}\par}\BLOCK{ endif }
+\vfill
+\VAR{ contact_lines() }
+\end{minipage}\hfill\begin{minipage}[t]{2.8cm}\vspace{0pt}\raggedleft\includegraphics[height=\VAR{cv.photo_height or 2.6}cm,width=2.8cm,keepaspectratio]{\VAR{cv.photo}}\end{minipage}
 \BLOCK{ else }
-{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[8pt]
-\BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[4pt]\BLOCK{ endif }
-{\bodyfont \VAR{items|join(' \\textbar{} ')}}
-\BLOCK{ if personal }\\[2pt]{\bodyfont \VAR{personal|join(' \\textbar{} ')}}\BLOCK{ endif }
+{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}\par}\vspace{6pt}
+\BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}\par}\vspace{3pt}\BLOCK{ endif }
+\VAR{ contact_lines() }
 \BLOCK{ endif }
 \par\fitsp{1mm}
 

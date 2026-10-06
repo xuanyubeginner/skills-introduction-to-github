@@ -139,7 +139,7 @@ def test_compact_template_and_markup():
     assert r"\textbf{Thesis:} Risk \& Return (95\%)" in tex
     assert r"\VAR" not in tex and r"\BLOCK" not in tex and "includegraphics" not in tex  # no photo by default
     tex = render(ROOT / "templates" / "compact.tex.j2", dict(data, photo="me.jpg"), [])
-    assert r"\includegraphics[height=\photoh,width=2.8cm,keepaspectratio]{me.jpg}" in tex
+    assert r"\includegraphics[height=2.6cm,width=2.8cm,keepaspectratio]{me.jpg}" in tex
 
 
 def test_profile_skill_names_merge_and_short_names_skip():
@@ -154,7 +154,8 @@ def test_compact_section_order_and_personal_line():
     contact = dict(PROFILE.data["contact"], birth_date="05.03.1996", nationality="Chinese")
     data = dict(PROFILE.data, contact=contact)
     tex = render(ROOT / "templates" / "compact.tex.j2", data, [])
-    assert r"Date of birth: 05.03.1996 \textbar{} Nationality: Chinese" in tex
+    assert r"\mbox{Date of birth: 05.03.1996}\discretionary{}{}{\kern0.5em\textbar\kern0.5em}\mbox{Nationality: Chinese}" in tex
+    assert r"\mbox{Tel: " in tex and r"\mbox{Address: " in tex
     assert tex.index("Key Skills") < tex.index("Professional Experience") < tex.index(r"\section{Education}")
     tex = render(ROOT / "templates" / "compact.tex.j2",
                  dict(data, section_order=["profile", "skills", "education", "experience"]), [])
