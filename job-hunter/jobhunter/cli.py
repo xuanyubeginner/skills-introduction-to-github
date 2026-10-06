@@ -152,6 +152,11 @@ def cmd_tailor(a):
     photo = cv.get("photo")
     if photo:
         src = (ROOT / photo) if not Path(photo).is_absolute() else Path(photo)
+        if not src.exists():  # e.g. profile says picture.jpg but the file is picture.png / Picture.PNG
+            alts = [f for f in src.parent.glob("*") if f.stem.lower() == src.stem.lower()
+                    and f.suffix.lower() in {".jpg", ".jpeg", ".png", ".pdf"}]
+            if alts:
+                src = alts[0]
         if "cv.photo" not in template.read_text(encoding="utf-8"):
             print(f"Photo skipped: template {template.name} has no photo slot "
                   f"(set tailor: template: templates/compact.tex.j2 in config.yaml).")
