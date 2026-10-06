@@ -148,3 +148,15 @@ def test_profile_skill_names_merge_and_short_names_skip():
     assert "Cash management" not in p.lexicon and "R" not in p.lexicon  # merged into lexicon / skipped
     assert "R (language)" in p.skills  # still detected from "with R"
     assert "R (language)" not in kw.find_skills("Head of R&D", p.lexicon)
+
+
+def test_compact_section_order_and_personal_line():
+    contact = dict(PROFILE.data["contact"], birth_date="05.03.1996", nationality="Chinese")
+    data = dict(PROFILE.data, contact=contact)
+    tex = render(ROOT / "templates" / "compact.tex.j2", data, [])
+    assert r"Date of birth: 05.03.1996 \textbar{} Nationality: Chinese" in tex
+    assert tex.index("Key Skills") < tex.index("Professional Experience") < tex.index(r"\section{Education}")
+    tex = render(ROOT / "templates" / "compact.tex.j2",
+                 dict(data, section_order=["profile", "skills", "education", "experience"]), [])
+    assert tex.index(r"\section{Education}") < tex.index("Professional Experience")
+    assert tex.count(r"\begin{document}") == 1

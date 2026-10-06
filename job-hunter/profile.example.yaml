@@ -12,8 +12,11 @@ contact:
   linkedin: linkedin.com/in/yourname
   github: github.com/yourname
   # work_permit: "EU Blue Card eligible / valid German residence permit"  # recommended for non-EU candidates
+  # birth_date: "DD.MM.YYYY"       # optional (common in DE, never required)
+  # nationality: ...              # optional
 
 # photo: photo.jpg   # optional (compact template): file in the job-hunter folder
+# section_order: [profile, skills, experience, education, projects]   # compact template; or `tailor --education-first`
 
 # What you are looking for (used for job-type filtering and the summary)
 target:

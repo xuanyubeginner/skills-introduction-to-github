@@ -129,6 +129,11 @@ def cmd_tailor(a):
     cfg, prof, db = ctx()
     job = score_job(db.get_job(a.id), prof)
     cv, rep = tailor.tailor(prof, job, max_bullets=a.max_bullets, max_projects=a.max_projects)
+    if a.education_first:
+        order = cv.get("section_order") or ["profile", "skills", "experience", "education", "projects"]
+        order = [s for s in order if s != "education"]
+        order.insert(order.index("experience") if "experience" in order else len(order), "education")
+        cv["section_order"] = order
     note = ""
     if a.llm:
         from . import llm
@@ -257,6 +262,8 @@ def main(argv=None):
     s.add_argument("--pdf", action="store_true", help="compile to PDF and run ATS checks on the PDF text")
     s.add_argument("--llm", action="store_true", help="let Claude rephrase summary/bullets (needs ANTHROPIC_API_KEY)")
     s.add_argument("--template", help="path to your own Jinja-LaTeX template")
+    s.add_argument("--education-first", action="store_true",
+                   help="put Education before Experience (graduate programmes, internships for enrolled students)")
     s.add_argument("--max-bullets", type=int, default=5)
     s.add_argument("--max-projects", type=int, default=3)
     s.set_defaults(fn=cmd_tailor)

@@ -5,7 +5,9 @@
 %%   - no tabular/tabularx for entries (dates via \hfill) -> text extracts in reading order
 %%   - no icon fonts (fontawesome) -> contact details are plain text a parser can find
 %%   - glyphtounicode + cmap + no f-ligatures -> "financial" is extracted as "financial"
-%%   - standard headings: Profile, Education, Professional Experience, Skills
+%%   - standard headings: Profile, Key Skills, Professional Experience, Education
+%% Section order comes from cv.section_order (default below); `tailor --education-first`
+%% swaps Experience and Education for graduate programmes / internships.
 %%   - photo is optional (cv.photo); it is an image, so it never hides text
 \documentclass[a4paper,10pt]{article}
 \usepackage[T1]{fontenc}
@@ -35,59 +37,18 @@
 
 \hypersetup{pdftitle={\VAR{cv.name|e} - CV}, pdfauthor={\VAR{cv.name|e}}, pdfkeywords={\VAR{keywords|join(', ')|e}}}
 
-\begin{document}
 
-%%---------- Heading ----------
-\BLOCK{ if cv.photo }\begin{minipage}[b]{\dimexpr\linewidth-2.8cm\relax}\BLOCK{ endif }
-{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[8pt]
-\BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[4pt]\BLOCK{ endif }
-{\small \VAR{cv.contact.phone|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }}
-\BLOCK{ if cv.contact.work_permit }\\[2pt]{\small \VAR{cv.contact.work_permit|e}}\BLOCK{ endif }
-\BLOCK{ if cv.photo }\end{minipage}\hfill\begin{minipage}[b]{2.35cm}\includegraphics[width=2.3cm]{\VAR{cv.photo}}\end{minipage}\BLOCK{ endif }
-\par\vspace{1mm}
 
-%%---------- Profile ----------
+%%---------- Sections (macros so the order is configurable) ----------
+\BLOCK{ macro profile_section() }
 \BLOCK{ if cv.summary }
 \section{Profile}
 {\small \VAR{cv.summary|md}\par}
 \BLOCK{ endif }
+\BLOCK{ endmacro }
 
-%%---------- Education ----------
-\section{Education}
-\BLOCK{ for ed in cv.education }
-\entry{\VAR{ed.degree|e}}{\VAR{ed.start|e} -- \VAR{ed.end|e}}{\VAR{ed.school|e}}{\VAR{ed.location|e}}
-\BLOCK{ if ed.bullets or ed.details }
-\begin{itemize}\small
-\BLOCK{ if ed.details }  \item \VAR{ed.details|md}
-\BLOCK{ endif }\BLOCK{ for b in ed.bullets }  \item \VAR{b|md}
-\BLOCK{ endfor }\end{itemize}
-\BLOCK{ endif }
-\vspace{0.5mm}
-\BLOCK{ endfor }
-
-%%---------- Experience ----------
-\section{Professional Experience}
-\BLOCK{ for x in cv.experience }
-\entry{\VAR{x.title|e}}{\VAR{x.start|e} -- \VAR{x.end|e}}{\VAR{x.company|e}}{\VAR{x.location|e}}
-\begin{itemize}\small
-\BLOCK{ for b in x.bullets }  \item \VAR{b|md}
-\BLOCK{ endfor }\end{itemize}
-\vspace{0.5mm}
-\BLOCK{ endfor }
-
-%%---------- Projects (optional) ----------
-\BLOCK{ if cv.projects }
-\section{Projects}
-\BLOCK{ for p in cv.projects }
-\textbf{\VAR{p.name|e}}\BLOCK{ if p.tech } -- {\footnotesize \VAR{p.tech|join(', ')|e}}\BLOCK{ endif }\par
-\begin{itemize}\small
-\BLOCK{ for b in p.bullets }  \item \VAR{b|md}
-\BLOCK{ endfor }\end{itemize}
-\BLOCK{ endfor }
-\BLOCK{ endif }
-
-%%---------- Skills ----------
-\section{Skills}
+\BLOCK{ macro skills_section() }
+\section{Key Skills}
 \begin{itemize}[leftmargin=0pt,label={},itemsep=0.6mm]\small
 \BLOCK{ for group, items in cv.skills.items() }
   \item \textbf{\VAR{group|e}:} \VAR{items|join(', ')|e}
@@ -100,5 +61,67 @@
   \item \textbf{Certification\BLOCK{ if cv.certifications|length > 1 }s\BLOCK{ endif }:} \VAR{cv.certifications|join('; ')|e}
 \BLOCK{ endif }
 \end{itemize}
+\BLOCK{ endmacro }
+
+\BLOCK{ macro experience_section() }
+\section{Professional Experience}
+\BLOCK{ for x in cv.experience }
+\entry{\VAR{x.title|e}}{\VAR{x.start|e} -- \VAR{x.end|e}}{\VAR{x.company|e}}{\VAR{x.location|e}}
+\begin{itemize}\small
+\BLOCK{ for b in x.bullets }  \item \VAR{b|md}
+\BLOCK{ endfor }\end{itemize}
+\vspace{0.5mm}
+\BLOCK{ endfor }
+\BLOCK{ endmacro }
+
+\BLOCK{ macro education_section() }
+\section{Education}
+\BLOCK{ for ed in cv.education }
+\entry{\VAR{ed.degree|e}}{\VAR{ed.start|e} -- \VAR{ed.end|e}}{\VAR{ed.school|e}}{\VAR{ed.location|e}}
+\BLOCK{ if ed.bullets or ed.details }
+\begin{itemize}\small
+\BLOCK{ if ed.details }  \item \VAR{ed.details|md}
+\BLOCK{ endif }\BLOCK{ for b in ed.bullets }  \item \VAR{b|md}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endif }
+\vspace{0.5mm}
+\BLOCK{ endfor }
+\BLOCK{ endmacro }
+
+\BLOCK{ macro projects_section() }
+\BLOCK{ if cv.projects }
+\section{Projects}
+\BLOCK{ for p in cv.projects }
+\textbf{\VAR{p.name|e}}\BLOCK{ if p.tech } -- {\footnotesize \VAR{p.tech|join(', ')|e}}\BLOCK{ endif }\par
+\begin{itemize}\small
+\BLOCK{ for b in p.bullets }  \item \VAR{b|md}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endfor }
+\BLOCK{ endif }
+\BLOCK{ endmacro }
+
+\begin{document}
+
+%%---------- Heading ----------
+\BLOCK{ if cv.photo }\begin{minipage}[b]{\dimexpr\linewidth-2.8cm\relax}\BLOCK{ endif }
+{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[8pt]
+\BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[4pt]\BLOCK{ endif }
+{\small \VAR{cv.contact.phone|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }}
+\BLOCK{ set personal = [] }
+\BLOCK{ if cv.contact.birth_date }\BLOCK{ set _ = personal.append('Date of birth: ' ~ cv.contact.birth_date) }\BLOCK{ endif }
+\BLOCK{ if cv.contact.nationality }\BLOCK{ set _ = personal.append('Nationality: ' ~ cv.contact.nationality) }\BLOCK{ endif }
+\BLOCK{ if cv.contact.work_permit }\BLOCK{ set _ = personal.append(cv.contact.work_permit) }\BLOCK{ endif }
+\BLOCK{ if personal }\\[2pt]{\small \VAR{personal|map('e')|join(' \\textbar{} ')}}\BLOCK{ endif }
+\BLOCK{ if cv.photo }\end{minipage}\hfill\begin{minipage}[b]{2.35cm}\includegraphics[width=2.3cm]{\VAR{cv.photo}}\end{minipage}\BLOCK{ endif }
+\par\vspace{1mm}
+
+\BLOCK{ for s in (cv.section_order or ['profile', 'skills', 'experience', 'education', 'projects']) }
+\BLOCK{ if s == 'profile' }\VAR{ profile_section() }
+\BLOCK{ elif s == 'skills' }\VAR{ skills_section() }
+\BLOCK{ elif s == 'experience' }\VAR{ experience_section() }
+\BLOCK{ elif s == 'education' }\VAR{ education_section() }
+\BLOCK{ elif s == 'projects' }\VAR{ projects_section() }
+\BLOCK{ endif }
+\BLOCK{ endfor }
 
 \end{document}
