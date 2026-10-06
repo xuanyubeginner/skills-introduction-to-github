@@ -139,7 +139,7 @@ def test_compact_template_and_markup():
     assert r"\textbf{Thesis:} Risk \& Return (95\%)" in tex
     assert r"\VAR" not in tex and r"\BLOCK" not in tex and "includegraphics" not in tex  # no photo by default
     tex = render(ROOT / "templates" / "compact.tex.j2", dict(data, photo="me.jpg"), [])
-    assert r"\includegraphics[width=2.3cm]{me.jpg}" in tex
+    assert r"\includegraphics[height=\photoh,width=2.8cm,keepaspectratio]{me.jpg}" in tex
 
 
 def test_profile_skill_names_merge_and_short_names_skip():
