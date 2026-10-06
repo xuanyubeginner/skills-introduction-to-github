@@ -39,6 +39,7 @@ search_links:
 tailor:
   # cv.tex.j2 = spacious default; compact.tex.j2 = dense one-page finance style (optional photo)
   template: templates/cv.tex.j2
+  pages: 1                 # exact page count for `tailor --pdf` (auto-fits font/spacing; compact template)
 
 tracker:
   no_response_after_days: 21   # applications older than this without update count as "No Response"

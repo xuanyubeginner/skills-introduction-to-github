@@ -12,7 +12,7 @@ from pathlib import Path
 
 import yaml
 
-from . import ats, dashboard, latex, tailor
+from . import ats, dashboard, fit, latex, tailor
 from .db import DB, STATUSES
 from .matcher import Profile, score_job
 from .models import Job
@@ -160,13 +160,24 @@ def cmd_tailor(a):
             cv["photo"] = ""
     tex.write_text(latex.render(template, cv, rep["matched"]), encoding="utf-8")
     (outdir / "job_description.txt").write_text(f"{job.title}\n{job.company}\n{job.url}\n\n{job.description}", encoding="utf-8")
-    (outdir / "tailored_profile.yaml").write_text(yaml.safe_dump(cv, allow_unicode=True, sort_keys=False), encoding="utf-8")
     ats_res = None
+    layout = ""
     if a.pdf:
-        pdf = latex.compile_pdf(tex)
+        pages = a.pages or (cfg.get("tailor") or {}).get("pages", 1)
+        if not a.no_fit and fit.supports_fit(template):
+            print(f"Fitting the CV to exactly {pages} page(s)…")
+            pdf, info = fit.fit_to_pages(template, cv, rep["matched"], tex, pages=pages)
+            layout = fit.describe(info)
+            print(layout)
+        else:
+            pdf = latex.compile_pdf(tex)
         ats_res = ats.check(pdf, cv, rep["jd_keywords"], prof.lexicon)
         print(f"PDF: {pdf}")
-    (outdir / "ats_report.md").write_text(ats.report_markdown(job.to_dict(), rep, ats_res, note), encoding="utf-8")
+    (outdir / "tailored_profile.yaml").write_text(yaml.safe_dump(cv, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    report = ats.report_markdown(job.to_dict(), rep, ats_res, note)
+    if layout:
+        report += "\n## Layout\n" + layout + "\n"
+    (outdir / "ats_report.md").write_text(report, encoding="utf-8")
     print(f"LaTeX: {tex}\nReport: {outdir / 'ats_report.md'}")
     print(f"JD keyword coverage: {rep['coverage']}%  | missing: {', '.join(rep['missing'][:10]) or '-'}")
     if ats_res:
@@ -262,6 +273,8 @@ def main(argv=None):
     s.add_argument("--pdf", action="store_true", help="compile to PDF and run ATS checks on the PDF text")
     s.add_argument("--llm", action="store_true", help="let Claude rephrase summary/bullets (needs ANTHROPIC_API_KEY)")
     s.add_argument("--template", help="path to your own Jinja-LaTeX template")
+    s.add_argument("--pages", type=int, help="exact page count for the PDF (default 1, or tailor.pages in config)")
+    s.add_argument("--no-fit", action="store_true", help="don't auto-adjust font/spacing to the page count")
     s.add_argument("--education-first", action="store_true",
                    help="put Education before Experience (graduate programmes, internships for enrolled students)")
     s.add_argument("--max-bullets", type=int, default=5)

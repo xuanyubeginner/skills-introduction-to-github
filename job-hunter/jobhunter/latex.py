@@ -42,19 +42,19 @@ def make_env(template_dir: Path) -> jinja2.Environment:
     return env
 
 
-def render(template_path: Path, cv: dict, keywords: list[str]) -> str:
+def render(template_path: Path, cv: dict, keywords: list[str], fit: dict | None = None) -> str:
     env = make_env(template_path.parent)
-    return env.get_template(template_path.name).render(cv=cv, keywords=keywords)
+    return env.get_template(template_path.name).render(cv=cv, keywords=keywords, fit=fit)
 
 
-def compile_pdf(tex_path: Path) -> Path:
+def compile_pdf(tex_path: Path, clean: bool = True) -> Path:
     """Compile with latexmk / tectonic / pdflatex, whichever is installed."""
     tex_path = tex_path.resolve()
     cwd = tex_path.parent
     if shutil.which("latexmk"):
         cmd = ["latexmk", "-pdf", "-interaction=nonstopmode", "-halt-on-error", tex_path.name]
     elif shutil.which("tectonic"):
-        cmd = ["tectonic", tex_path.name]
+        cmd = ["tectonic", "--keep-logs", tex_path.name]
     elif shutil.which("pdflatex"):
         cmd = ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", tex_path.name]
     else:
@@ -64,6 +64,6 @@ def compile_pdf(tex_path: Path) -> Path:
     if proc.returncode != 0 or not pdf.exists():
         log = (proc.stdout + proc.stderr)[-3000:]
         raise RuntimeError(f"LaTeX compilation failed:\n{log}")
-    if shutil.which("latexmk"):
+    if clean and shutil.which("latexmk"):
         subprocess.run(["latexmk", "-c", tex_path.name], cwd=cwd, capture_output=True)
     return pdf

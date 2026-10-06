@@ -78,6 +78,8 @@ python -m jobhunter show <ID>
 # 4) Generate the tailored CV + PDF + ATS report
 python -m jobhunter tailor <ID> --pdf            # deterministic reorder
 python -m jobhunter tailor <ID> --pdf --llm      # plus Claude rephrasing (check every line)
+python -m jobhunter tailor <ID> --pdf --pages 2  # exactly 2 pages instead of 1
+python -m jobhunter tailor <ID> --pdf --no-fit   # keep the template's fixed sizes
 #   → output/<date>_<company>_<title>/  Name_CV.tex / .pdf / ats_report.md / job_description.txt
 #   After hand-editing the .tex: python -m jobhunter build output/.../Name_CV.tex
 
@@ -99,6 +101,11 @@ python -m jobhunter dashboard --open
    ```bash
    python -m jobhunter check <ID> ~/Downloads/main.pdf
    ```
+
+**Exact page count (compact template).** With `--pdf`, the tool compiles the CV several times. It looks for the largest font size, spacing and margins that still fit exactly one page (or `--pages N`):
+
+- **Too long?** It goes down to 8.8pt and the tightest spacing. If that is still too long, it drops the least relevant bullets (each role keeps at least 2) and lists them in the report.
+- **Too short?** It uses the most spacious layout and suggests adding more true bullets.
 
 **What to do with `ats_report.md`:**
 

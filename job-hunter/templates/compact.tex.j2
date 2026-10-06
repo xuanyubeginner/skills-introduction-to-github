@@ -17,7 +17,12 @@
 \input{glyphtounicode}\pdfgentounicode=1
 \usepackage[expansion=false,protrusion=false]{microtype}
 \DisableLigatures[f]{encoding=*, family=*}
-\usepackage[left=1.4cm,top=1.0cm,right=1.2cm,bottom=1.0cm]{geometry}
+%% Layout knobs. `tailor --pdf` searches these so the CV fills exactly one page (see jobhunter/fit.py).
+\BLOCK{ set f = fit or dict() }
+\usepackage[left=\VAR{f.ml or 1.4}cm,top=\VAR{f.mv or 1.0}cm,right=\VAR{f.mr or 1.2}cm,bottom=\VAR{f.mv or 1.0}cm]{geometry}
+\newcommand{\bodyfont}{\fontsize{\VAR{f.fs or 9}}{\VAR{f.bs or 11}}\selectfont}
+\newcommand{\metafont}{\fontsize{\VAR{f.ms or 8}}{\VAR{f.mbs or 9.5}}\selectfont}
+\newcommand{\fitsp}[1]{\vspace{\VAR{f.sp or 1}\dimexpr #1\relax}}
 \usepackage{titlesec}
 \usepackage{enumitem}
 \usepackage{graphicx}
@@ -28,12 +33,12 @@
 \raggedright
 \setlength{\parindent}{0pt}
 \titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\titlerule\vspace{-2pt}]
-\titlespacing*{\section}{0pt}{7pt}{4pt}
+\titlespacing*{\section}{0pt}{\VAR{(7 * (f.sp or 1))|round(2)}pt}{\VAR{(4 * (f.sp or 1))|round(2)}pt}
 \renewcommand{\labelitemi}{\raisebox{0.2ex}{\tiny$\bullet$}}
-\setlist[itemize]{leftmargin=3.2ex,rightmargin=1.5ex,labelsep=1.2mm,itemsep=0.4mm,topsep=0.4mm,parsep=0pt}
+\setlist[itemize]{leftmargin=3.2ex,rightmargin=1.5ex,labelsep=1.2mm,itemsep=\VAR{(0.4 * (f.sp or 1))|round(3)}mm,topsep=\VAR{(0.4 * (f.sp or 1))|round(3)}mm,parsep=0pt}
 
 %% {Title}{Date}{Organisation}{Location}: title + date on line 1, organisation + location on line 2
-\newcommand{\entry}[4]{\textbf{#1}\hfill\textbf{\footnotesize #2}\\{\footnotesize #3}\hfill{\footnotesize #4}\par\vspace{0.3mm}}
+\newcommand{\entry}[4]{\textbf{#1}\hfill\textbf{\metafont #2}\\{\metafont #3}\hfill{\metafont #4}\par\fitsp{0.3mm}}
 
 \hypersetup{pdftitle={\VAR{cv.name|e} - CV}, pdfauthor={\VAR{cv.name|e}}, pdfkeywords={\VAR{keywords|join(', ')|e}}}
 
@@ -43,13 +48,13 @@
 \BLOCK{ macro profile_section() }
 \BLOCK{ if cv.summary }
 \section{Profile}
-{\small \VAR{cv.summary|md}\par}
+{\bodyfont \VAR{cv.summary|md}\par}
 \BLOCK{ endif }
 \BLOCK{ endmacro }
 
 \BLOCK{ macro skills_section() }
 \section{Key Skills}
-\begin{itemize}[leftmargin=0pt,label={},itemsep=0.6mm]\small
+\begin{itemize}[leftmargin=0pt,label={},itemsep=\VAR{(0.6 * (f.sp or 1))|round(3)}mm]\bodyfont
 \BLOCK{ for group, items in cv.skills.items() }
   \item \textbf{\VAR{group|e}:} \VAR{items|join(', ')|e}
 \BLOCK{ endfor }
@@ -67,10 +72,10 @@
 \section{Professional Experience}
 \BLOCK{ for x in cv.experience }
 \entry{\VAR{x.title|e}}{\VAR{x.start|e} -- \VAR{x.end|e}}{\VAR{x.company|e}}{\VAR{x.location|e}}
-\begin{itemize}\small
+\begin{itemize}\bodyfont
 \BLOCK{ for b in x.bullets }  \item \VAR{b|md}
 \BLOCK{ endfor }\end{itemize}
-\vspace{0.5mm}
+\fitsp{0.5mm}
 \BLOCK{ endfor }
 \BLOCK{ endmacro }
 
@@ -79,12 +84,12 @@
 \BLOCK{ for ed in cv.education }
 \entry{\VAR{ed.degree|e}}{\VAR{ed.start|e} -- \VAR{ed.end|e}}{\VAR{ed.school|e}}{\VAR{ed.location|e}}
 \BLOCK{ if ed.bullets or ed.details }
-\begin{itemize}\small
+\begin{itemize}\bodyfont
 \BLOCK{ if ed.details }  \item \VAR{ed.details|md}
 \BLOCK{ endif }\BLOCK{ for b in ed.bullets }  \item \VAR{b|md}
 \BLOCK{ endfor }\end{itemize}
 \BLOCK{ endif }
-\vspace{0.5mm}
+\fitsp{0.5mm}
 \BLOCK{ endfor }
 \BLOCK{ endmacro }
 
@@ -92,8 +97,8 @@
 \BLOCK{ if cv.projects }
 \section{Projects}
 \BLOCK{ for p in cv.projects }
-\textbf{\VAR{p.name|e}}\BLOCK{ if p.tech } -- {\footnotesize \VAR{p.tech|join(', ')|e}}\BLOCK{ endif }\par
-\begin{itemize}\small
+\textbf{\VAR{p.name|e}}\BLOCK{ if p.tech } -- {\metafont \VAR{p.tech|join(', ')|e}}\BLOCK{ endif }\par
+\begin{itemize}\bodyfont
 \BLOCK{ for b in p.bullets }  \item \VAR{b|md}
 \BLOCK{ endfor }\end{itemize}
 \BLOCK{ endfor }
@@ -106,14 +111,14 @@
 \BLOCK{ if cv.photo }\begin{minipage}[t]{\dimexpr\linewidth-2.8cm\relax}\vspace{0pt}\BLOCK{ endif }
 {\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[8pt]
 \BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[4pt]\BLOCK{ endif }
-{\small \VAR{cv.contact.phone|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }}
+{\bodyfont \VAR{cv.contact.phone|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }}
 \BLOCK{ set personal = [] }
 \BLOCK{ if cv.contact.birth_date }\BLOCK{ set _ = personal.append('Date of birth: ' ~ cv.contact.birth_date) }\BLOCK{ endif }
 \BLOCK{ if cv.contact.nationality }\BLOCK{ set _ = personal.append('Nationality: ' ~ cv.contact.nationality) }\BLOCK{ endif }
 \BLOCK{ if cv.contact.work_permit }\BLOCK{ set _ = personal.append(cv.contact.work_permit) }\BLOCK{ endif }
-\BLOCK{ if personal }\\[2pt]{\small \VAR{personal|map('e')|join(' \\textbar{} ')}}\BLOCK{ endif }
+\BLOCK{ if personal }\\[2pt]{\bodyfont \VAR{personal|map('e')|join(' \\textbar{} ')}}\BLOCK{ endif }
 \BLOCK{ if cv.photo }\end{minipage}\hfill\begin{minipage}[t]{2.35cm}\vspace{0pt}\includegraphics[width=2.3cm]{\VAR{cv.photo}}\end{minipage}\BLOCK{ endif }
-\par\vspace{1mm}
+\par\fitsp{1mm}
 
 \BLOCK{ for s in (cv.section_order or ['profile', 'skills', 'experience', 'education', 'projects']) }
 \BLOCK{ if s == 'profile' }\VAR{ profile_section() }
@@ -124,4 +129,5 @@
 \BLOCK{ endif }
 \BLOCK{ endfor }
 
+\par\typeout{JOBHUNTER-FILL \the\pagetotal\space\the\pagegoal}
 \end{document}

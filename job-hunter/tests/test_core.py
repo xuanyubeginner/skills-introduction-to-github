@@ -160,3 +160,33 @@ def test_compact_section_order_and_personal_line():
                  dict(data, section_order=["profile", "skills", "education", "experience"]), [])
     assert tex.index(r"\section{Education}") < tex.index("Professional Experience")
     assert tex.count(r"\begin{document}") == 1
+
+
+def test_fit_params_monotonic_and_drop_order():
+    from jobhunter import fit
+    a, b = fit.params(0.0), fit.params(1.0)
+    assert a["fs"] < fit.params(0.5)["fs"] < b["fs"] and a["sp"] < b["sp"] and a["ml"] < b["ml"]
+    cv = {"experience": [{"title": "A", "bullets": ["a1", "a2", "a3"]}, {"title": "B", "bullets": ["b1", "b2"]}],
+          "projects": [{"name": "P"}]}
+    assert fit._drop_one(cv) == "A: a3"          # least relevant bullet of the longest role
+    assert fit._drop_one(cv) == "project: P"     # roles keep >= 2 bullets
+    assert fit._drop_one(cv) is None
+
+
+import shutil as _shutil  # noqa: E402
+
+import pytest  # noqa: E402
+
+
+@pytest.mark.skipif(not (_shutil.which("latexmk") or _shutil.which("pdflatex")), reason="needs LaTeX")
+@pytest.mark.parametrize("extra_bullets", [0, 60])
+def test_fit_to_exactly_one_page(tmp_path, extra_bullets):
+    import copy
+
+    from jobhunter import fit
+    cv = copy.deepcopy(PROFILE.data)
+    cv["experience"][0]["bullets"] += [f"Additional achievement number {i} with enough words to wrap onto a "
+                                       f"second line in the compact layout of the CV template" for i in range(extra_bullets)]
+    pdf, info = fit.fit_to_pages(ROOT / "templates" / "compact.tex.j2", cv, [], tmp_path / "cv.tex", pages=1)
+    assert info["pages"] == 1 and len(fit.PdfReader(str(pdf)).pages) == 1
+    assert bool(info["dropped"]) == (extra_bullets > 0)
