@@ -152,12 +152,20 @@ def cmd_tailor(a):
     photo = cv.get("photo")
     if photo:
         src = (ROOT / photo) if not Path(photo).is_absolute() else Path(photo)
-        if src.exists():
+        if "cv.photo" not in template.read_text(encoding="utf-8"):
+            print(f"Photo skipped: template {template.name} has no photo slot "
+                  f"(set tailor: template: templates/compact.tex.j2 in config.yaml).")
+            cv["photo"] = ""
+        elif not src.exists():
+            print(f"Photo skipped: {src} not found. Put the file in {ROOT} or fix 'photo:' in profile.yaml.")
+            cv["photo"] = ""
+        elif src.suffix.lower() not in {".jpg", ".jpeg", ".png", ".pdf"}:
+            print(f"Photo skipped: {src.name} — LaTeX needs JPG, PNG or PDF (convert HEIC/WebP first).")
+            cv["photo"] = ""
+        else:
             shutil.copy(src, outdir / src.name)
             cv["photo"] = src.name
-        else:
-            print(f"Photo {src} not found — CV built without photo.")
-            cv["photo"] = ""
+            print(f"Photo: {src.name}")
     tex.write_text(latex.render(template, cv, rep["matched"]), encoding="utf-8")
     (outdir / "job_description.txt").write_text(f"{job.title}\n{job.company}\n{job.url}\n\n{job.description}", encoding="utf-8")
     ats_res = None
