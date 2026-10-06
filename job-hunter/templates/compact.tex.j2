@@ -108,25 +108,36 @@
 \begin{document}
 
 %%---------- Heading ----------
-%% With a photo, the Profile section sits in the left column next to it, so the
-%% photo's height is used for text instead of leaving white space under the contact line.
+%% Without a photo: contact details on one line. With a photo: one item per line
+%% (classic DE layout) and the photo is scaled to exactly the height of that block,
+%% so there is no white space next to or under it.
 \BLOCK{ set order = cv.section_order or ['profile', 'skills', 'experience', 'education', 'projects'] }
-\BLOCK{ set profile_in_header = cv.photo and cv.summary and order[0] == 'profile' }
-\BLOCK{ if cv.photo }\begin{minipage}[t]{\dimexpr\linewidth-2.8cm\relax}\vspace{0pt}\BLOCK{ endif }
+\BLOCK{ set items = [cv.contact.phone|e, '\\href{mailto:' ~ cv.contact.email ~ '}{' ~ (cv.contact.email|e) ~ '}', cv.contact.location|e] }
+\BLOCK{ if cv.contact.linkedin }\BLOCK{ set _ = items.append('\\href{https://' ~ cv.contact.linkedin ~ '}{' ~ (cv.contact.linkedin|e) ~ '}') }\BLOCK{ endif }
+\BLOCK{ if cv.contact.github }\BLOCK{ set _ = items.append('\\href{https://' ~ cv.contact.github ~ '}{' ~ (cv.contact.github|e) ~ '}') }\BLOCK{ endif }
+\BLOCK{ set personal = [] }
+\BLOCK{ if cv.contact.birth_date }\BLOCK{ set _ = personal.append('Date of birth: ' ~ (cv.contact.birth_date|e)) }\BLOCK{ endif }
+\BLOCK{ if cv.contact.nationality }\BLOCK{ set _ = personal.append('Nationality: ' ~ (cv.contact.nationality|e)) }\BLOCK{ endif }
+\BLOCK{ if cv.contact.work_permit }\BLOCK{ set _ = personal.append(cv.contact.work_permit|e) }\BLOCK{ endif }
+\BLOCK{ if cv.photo }
+\newsavebox{\headbox}\newlength{\photoh}
+\savebox{\headbox}{\begin{minipage}[t]{\dimexpr\linewidth-3.0cm\relax}\vspace{0pt}
+{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[6pt]
+\BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[3pt]\BLOCK{ endif }
+{\bodyfont \VAR{(items + personal)|join('\\\\\n')}}
+\end{minipage}}
+\setlength{\photoh}{\dimexpr\ht\headbox+\dp\headbox\relax}
+\usebox{\headbox}\hfill\begin{minipage}[t]{2.8cm}\vspace{0pt}\raggedleft\includegraphics[height=\photoh,width=2.8cm,keepaspectratio]{\VAR{cv.photo}}\end{minipage}
+\BLOCK{ else }
 {\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[8pt]
 \BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[4pt]\BLOCK{ endif }
-{\bodyfont \VAR{cv.contact.phone|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }}
-\BLOCK{ set personal = [] }
-\BLOCK{ if cv.contact.birth_date }\BLOCK{ set _ = personal.append('Date of birth: ' ~ cv.contact.birth_date) }\BLOCK{ endif }
-\BLOCK{ if cv.contact.nationality }\BLOCK{ set _ = personal.append('Nationality: ' ~ cv.contact.nationality) }\BLOCK{ endif }
-\BLOCK{ if cv.contact.work_permit }\BLOCK{ set _ = personal.append(cv.contact.work_permit) }\BLOCK{ endif }
-\BLOCK{ if personal }\\[2pt]{\bodyfont \VAR{personal|map('e')|join(' \\textbar{} ')}}\BLOCK{ endif }
-\BLOCK{ if profile_in_header }\par\VAR{ profile_section() }\BLOCK{ endif }
-\BLOCK{ if cv.photo }\end{minipage}\hfill\begin{minipage}[t]{2.35cm}\vspace{0pt}\includegraphics[width=2.3cm]{\VAR{cv.photo}}\end{minipage}\BLOCK{ endif }
+{\bodyfont \VAR{items|join(' \\textbar{} ')}}
+\BLOCK{ if personal }\\[2pt]{\bodyfont \VAR{personal|join(' \\textbar{} ')}}\BLOCK{ endif }
+\BLOCK{ endif }
 \par\fitsp{1mm}
 
 \BLOCK{ for s in order }
-\BLOCK{ if s == 'profile' }\BLOCK{ if not profile_in_header }\VAR{ profile_section() }\BLOCK{ endif }
+\BLOCK{ if s == 'profile' }\VAR{ profile_section() }
 \BLOCK{ elif s == 'skills' }\VAR{ skills_section() }
 \BLOCK{ elif s == 'experience' }\VAR{ experience_section() }
 \BLOCK{ elif s == 'education' }\VAR{ education_section() }

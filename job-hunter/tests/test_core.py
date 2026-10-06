@@ -192,9 +192,9 @@ def test_fit_to_exactly_one_page(tmp_path, extra_bullets):
     assert bool(info["dropped"]) == (extra_bullets > 0)
 
 
-def test_compact_profile_moves_next_to_photo():
+def test_compact_photo_header_keeps_profile_below():
     tex = render(ROOT / "templates" / "compact.tex.j2", dict(PROFILE.data, photo="me.png"), [])
     assert tex.count(r"\section{Profile}") == 1
-    assert tex.index(r"\section{Profile}") < tex.index(r"\includegraphics") < tex.index(r"\section{Key Skills}")
+    assert tex.index(r"\includegraphics") < tex.index(r"\section{Profile}") < tex.index(r"\section{Key Skills}")
     tex = render(ROOT / "templates" / "compact.tex.j2", dict(PROFILE.data), [])
     assert tex.count(r"\section{Profile}") == 1 and "includegraphics" not in tex
