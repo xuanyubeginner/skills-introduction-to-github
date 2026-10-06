@@ -130,3 +130,21 @@ def test_llm_rewrite_guardrail(monkeypatch):
     assert bullets[0].startswith("Designed Power BI")
     assert bullets[1] == exp[1]  # reverted to the original
     assert "reverted" in note
+
+
+def test_compact_template_and_markup():
+    data = dict(PROFILE.data)
+    data["education"] = [dict(PROFILE.data["education"][0], bullets=["**Thesis:** Risk & Return (95%)"])]
+    tex = render(ROOT / "templates" / "compact.tex.j2", data, ["SQL"])
+    assert r"\textbf{Thesis:} Risk \& Return (95\%)" in tex
+    assert r"\VAR" not in tex and r"\BLOCK" not in tex and "includegraphics" not in tex  # no photo by default
+    tex = render(ROOT / "templates" / "compact.tex.j2", dict(data, photo="me.jpg"), [])
+    assert r"\includegraphics[width=2.3cm]{me.jpg}" in tex
+
+
+def test_profile_skill_names_merge_and_short_names_skip():
+    p = Profile(dict(PROFILE.data, skills={"Finance": ["Cash management", "R"]},
+                     education=[{"degree": "MSc", "bullets": ["Statistical Programming with R (1.3)"]}]))
+    assert "Cash management" not in p.lexicon and "R" not in p.lexicon  # merged into lexicon / skipped
+    assert "R (language)" in p.skills  # still detected from "with R"
+    assert "R (language)" not in kw.find_skills("Head of R&D", p.lexicon)

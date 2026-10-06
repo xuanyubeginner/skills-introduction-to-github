@@ -143,7 +143,16 @@ def cmd_tailor(a):
     outdir.mkdir(parents=True, exist_ok=True)
     name = slugify(prof.data.get("name", "CV")) + "_CV"
     tex = outdir / f"{name}.tex"
-    template = Path(a.template) if a.template else ROOT / "templates" / "cv.tex.j2"
+    template = Path(a.template or (cfg.get("tailor") or {}).get("template") or ROOT / "templates" / "cv.tex.j2")
+    photo = cv.get("photo")
+    if photo:
+        src = (ROOT / photo) if not Path(photo).is_absolute() else Path(photo)
+        if src.exists():
+            shutil.copy(src, outdir / src.name)
+            cv["photo"] = src.name
+        else:
+            print(f"Photo {src} not found — CV built without photo.")
+            cv["photo"] = ""
     tex.write_text(latex.render(template, cv, rep["matched"]), encoding="utf-8")
     (outdir / "job_description.txt").write_text(f"{job.title}\n{job.company}\n{job.url}\n\n{job.description}", encoding="utf-8")
     (outdir / "tailored_profile.yaml").write_text(yaml.safe_dump(cv, allow_unicode=True, sort_keys=False), encoding="utf-8")

@@ -42,7 +42,10 @@ def load_lexicon(extra: dict[str, list[str]] | None = None) -> dict[str, list[st
         canon = canon.strip()
         forms = [canon] + [a.strip() for a in aliases.split(",") if a.strip()]
         lex[canon] = forms
+    known = {normalize(f).strip(): c for c, fs in lex.items() for f in fs}
     for canon, forms in (extra or {}).items():
+        if normalize(canon).strip() in known:  # e.g. "Cash management" is already "Cash Management"
+            continue
         lex.setdefault(canon, [canon])
         lex[canon] = list(dict.fromkeys(lex[canon] + list(forms)))
     return lex

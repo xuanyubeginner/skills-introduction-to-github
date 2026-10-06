@@ -123,7 +123,23 @@ python -m jobhunter dashboard --open
    - `|e` escapes LaTeX special characters such as `& % $ # _`.
    - Lines starting with `%%` are template comments and won't appear in the output.
    - The available fields are exactly those in `profile.yaml`; `templates/cv.tex.j2` is a complete reference.
-3. Run `python -m jobhunter tailor <ID> --pdf --template templates/my_cv.tex.j2`.
+3. Run `python -m jobhunter tailor <ID> --pdf --template templates/my_cv.tex.j2`,
+   or set it once in `config.yaml` under `tailor: template:`.
+
+Two templates ship with the tool:
+
+| Template | Style |
+|---|---|
+| `templates/cv.tex.j2` | Spacious, 11pt (default) |
+| `templates/compact.tex.j2` | Dense one-page finance style, 10pt |
+
+`compact.tex.j2` also supports:
+
+- an optional `photo:` field;
+- bullets under education entries;
+- `**bold**` labels inside bullets.
+
+It replaces the usual `tabular` layouts and fontawesome icons with plain text, so an ATS reads it correctly.
 
 **ATS tips:**
 

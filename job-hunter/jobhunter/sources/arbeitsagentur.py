@@ -13,6 +13,7 @@ from . import get, log
 
 BASE = "https://rest.arbeitsagentur.de/jobboerse/jobsuche-service"
 API_KEY = {"X-API-Key": "jobboerse-jobsuche"}  # public client id published by the BA
+_details: dict[str, str] = {}  # refnr -> description, shared across queries in one run
 ANGEBOTSART = {"full_time": 1, "internship": 34}  # 1 = Arbeit, 34 = Praktikum/Trainee
 
 
@@ -59,8 +60,9 @@ def search(keyword: str, location: dict, cfg: dict) -> list[Job]:
     }
     data = get(BASE + "/pc/v4/jobs", params=params, headers=API_KEY).json()
     jobs = parse_list(data)
-    for j in jobs[: cfg.get("detail_limit", 25)]:
-        desc = fetch_description(j.external_id)
-        if desc:
-            j.description = desc
+    for j in jobs[: cfg.get("detail_limit", 10)]:
+        if j.external_id not in _details:
+            _details[j.external_id] = fetch_description(j.external_id)
+        if _details[j.external_id]:
+            j.description = _details[j.external_id]
     return jobs

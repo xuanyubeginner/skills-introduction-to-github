@@ -12,6 +12,7 @@ search:
   max_age_days: 21
   results_per_query: 50
   min_score: 35            # hide jobs below this match score (0-100)
+  detail_limit: 10         # full JD downloads per Arbeitsagentur query
 
 sources:
   arbeitsagentur: {enabled: true}     # official German Federal Employment Agency API (free, includes many StepStone/Indeed jobs)
@@ -34,6 +35,10 @@ search_links:
   jobs.lu: "https://en.jobs.lu/SearchResults.aspx?Keywords={q}"
   Google Jobs: "https://www.google.com/search?q={q}+jobs+{loc}&ibp=htl;jobs"
   Indeed DE: "https://de.indeed.com/jobs?q={q}&l={loc}&fromage=14"
+
+tailor:
+  # cv.tex.j2 = spacious default; compact.tex.j2 = dense one-page finance style (optional photo)
+  template: templates/cv.tex.j2
 
 tracker:
   no_response_after_days: 21   # applications older than this without update count as "No Response"

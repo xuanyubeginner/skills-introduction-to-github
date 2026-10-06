@@ -13,6 +13,8 @@ contact:
   github: github.com/yourname
   # work_permit: "EU Blue Card eligible / valid German residence permit"  # recommended for non-EU candidates
 
+# photo: photo.jpg   # optional (compact template): file in the job-hunter folder
+
 # What you are looking for (used for job-type filtering and the summary)
 target:
   roles: [Data Analyst, Business Analyst, Data Scientist, BI Analyst]
@@ -62,7 +64,8 @@ education:
     location: Trier, Germany
     start: 2024-10
     end: 2026-09 (expected)
-    details: "Courses: Machine Learning, Statistics, Databases. Grade: 1.7"
+    bullets:                       # optional; **text** prints bold
+      - "**Relevant coursework:** Machine Learning (1.3), Statistics, Databases"
   - degree: B.Sc. Business Informatics
     school: Example University
     location: China

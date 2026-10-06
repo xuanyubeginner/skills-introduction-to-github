@@ -19,6 +19,14 @@ def latex_escape(value) -> str:
     return _ESC_RE.sub(lambda m: _LATEX_ESCAPES[m.group()], "" if value is None else str(value))
 
 
+_BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
+
+
+def latex_markup(value) -> str:
+    """Escape for LaTeX, then turn **text** into bold."""
+    return _BOLD_RE.sub(r"\\textbf{\1}", latex_escape(value))
+
+
 def make_env(template_dir: Path) -> jinja2.Environment:
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(str(template_dir)),
@@ -30,6 +38,7 @@ def make_env(template_dir: Path) -> jinja2.Environment:
         undefined=jinja2.ChainableUndefined,  # missing optional fields render as empty
     )
     env.filters["e"] = latex_escape
+    env.filters["md"] = latex_markup
     return env
 
 

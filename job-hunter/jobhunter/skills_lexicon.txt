@@ -3,7 +3,7 @@
 
 # --- programming & data
 Python = python3, pandas, numpy
-R (language) = r programming, rstudio, programmiersprache r, r/shiny
+R (language) = r programming, rstudio, programmiersprache r, r shiny, with r, in r, python r, r python, python and r, r and python, python or r, r or python, python oder r, r oder python, python und r
 SQL = sql, mysql, postgresql, postgres, t-sql, pl/sql, sqlite
 Java
 JavaScript = javascript, js, node.js, nodejs
@@ -15,7 +15,7 @@ MATLAB
 Scala
 Bash = shell scripting, linux shell
 Git = github, gitlab, version control, versionskontrolle
-Excel = microsoft excel, ms excel, advanced excel, vba, pivot tables, pivot
+Excel = microsoft excel, ms excel, advanced excel, vba, pivot tables, pivottables, pivot, xlookup, vlookup, sverweis
 Power BI = powerbi, power-bi, dax
 Tableau
 Looker
@@ -54,9 +54,10 @@ Product Management = produktmanagement, product owner
 Business Analysis = business analyst, requirements engineering, anforderungsmanagement
 Process Optimization = prozessoptimierung, process improvement, lean, six sigma, kaizen
 Supply Chain = supply chain management, logistik, logistics, procurement, einkauf, beschaffung
-Controlling = financial controlling, management reporting
+Controlling = controller, financial controlling, management reporting, management accounting, cost accounting, kostenrechnung, controle de gestion
 Financial Analysis = finanzanalyse, financial modelling, financial modeling, valuation, bewertung
-Accounting = buchhaltung, rechnungswesen, comptabilite, ifrs, hgb, us gaap
+Accounting = accountant, buchhaltung, buchhalter, finanzbuchhaltung, rechnungswesen, comptabilite, comptable, general ledger, hauptbuch
+IFRS = us gaap, hgb, lux gaap, accounting standards, rechnungslegung
 Audit = auditing, wirtschaftspruefung, revision, internal audit
 Risk Management = risikomanagement, gestion des risques, compliance
 Banking = banking industry, fund administration, fondsverwaltung, asset management, investment funds
@@ -69,6 +70,23 @@ Strategy = strategie, strategic planning, corporate strategy
 Reporting = berichtswesen, kpi, kpis, kpi reporting
 Stakeholder Management = stakeholder, stakeholder communication
 ESG = sustainability, nachhaltigkeit, csr
+
+# --- finance & accounting detail (useful for Controlling / FP&A / Accountant roles)
+Financial Reporting = financial statements, financial reports, jahresabschluss, monatsabschluss, reporting financier, etats financiers
+Month-end Closing = month-end close, monthly closing, year-end closing, abschlusserstellung, cloture
+Budgeting = budget, budgets, budgetierung, budgetplanung, forecast, forecasting, forecasts, finanzplanung, fp&a, financial planning
+Variance Analysis = variance analyses, abweichungsanalyse, plan-ist-vergleich, budget vs actual, ecarts
+Cash Management = treasury, liquidity management, liquiditaetsplanung, liquiditaetsmanagement, cash forecast, cash forecasts, cash flow, tresorerie
+Reconciliation = reconciliations, bank reconciliation, reconciled, kontenabstimmung, rapprochement
+Accounts Payable = kreditorenbuchhaltung, kreditoren, purchase-to-pay, p2p
+Accounts Receivable = debitorenbuchhaltung, debitoren, order-to-cash, o2c, receivables
+Tax = taxes, tax filings, tax compliance, steuern, steuererklaerungen, umsatzsteuer, vat, fiscalite
+ERP = erp system, erp systems, datev, oracle financials, microsoft dynamics
+Econometrics = oekonometrie, financial econometrics
+Time Series = time series analysis, time-series forecasting, zeitreihenanalyse, lstm, arima
+CFA = chartered financial analyst
+Data Validation = data quality, datenqualitaet, data integrity, data cleansing
+Revenue Recognition = ifrs 15, umsatzrealisierung
 
 # --- engineering / research
 CAD = autocad, solidworks, catia, siemens nx

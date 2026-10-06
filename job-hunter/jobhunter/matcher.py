@@ -12,7 +12,9 @@ class Profile:
 
     def __init__(self, data: dict):
         self.data = data
-        extra = {s: [s] for group in (data.get("skills") or {}).values() for s in group}
+        # very short items like "R" would match noise ("R&D"); those rely on lexicon aliases instead
+        extra = {s: [s] for group in (data.get("skills") or {}).values() for s in group
+                 if len(kw.normalize(str(s)).strip()) > 2}
         self.lexicon = kw.load_lexicon(extra)
         self.skills = set(kw.find_skills(self.full_text(), self.lexicon))
 
@@ -27,7 +29,7 @@ class Profile:
         for p in d.get("projects", []):
             parts += [p.get("name", "")] + p.get("tech", []) + p.get("bullets", [])
         for ed in d.get("education", []):
-            parts += [ed.get("degree", ""), ed.get("details", "")]
+            parts += [ed.get("degree", ""), ed.get("details", "")] + ed.get("bullets", [])
         parts += d.get("certifications", [])
         return "\n".join(str(p) for p in parts if p)
 
@@ -81,10 +83,10 @@ def score_job(job: Job, profile: Profile) -> Job:
     flags: list[str] = []
     norm = kw.normalize(text)
     if kw.GERMAN_REQUIRED.search(norm) and profile.language_level("German") < 5:
-        score -= 15
+        score -= 25  # usually a hard requirement in DE postings
         flags.append("German C1+ required")
     if kw.FRENCH_REQUIRED.search(norm) and profile.language_level("French") < 5:
-        score -= 15
+        score -= 25
         flags.append("French C1+ required")
     if kw.SENIOR.search(kw.normalize(job.title)):  # tool targets students / early-career
         score -= 20

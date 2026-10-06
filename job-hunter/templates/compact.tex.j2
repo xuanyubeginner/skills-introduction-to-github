@@ -1,0 +1,104 @@
+%% Compact one-page CV (classic finance look), rebuilt for ATS parsing.
+%% Same Jinja syntax as cv.tex.j2:  \VAR{...} values, \BLOCK{...} logic,
+%%   |e escapes LaTeX, |md escapes and turns **text** into bold.
+%% ATS changes compared with a typical tabular/icon template:
+%%   - no tabular/tabularx for entries (dates via \hfill) -> text extracts in reading order
+%%   - no icon fonts (fontawesome) -> contact details are plain text a parser can find
+%%   - glyphtounicode + cmap + no f-ligatures -> "financial" is extracted as "financial"
+%%   - standard headings: Profile, Education, Professional Experience, Skills
+%%   - photo is optional (cv.photo); it is an image, so it never hides text
+\documentclass[a4paper,10pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{cmap}
+\input{glyphtounicode}\pdfgentounicode=1
+\usepackage[expansion=false,protrusion=false]{microtype}
+\DisableLigatures[f]{encoding=*, family=*}
+\usepackage[left=1.4cm,top=1.0cm,right=1.2cm,bottom=1.0cm]{geometry}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\urlstyle{same}
+
+\pagestyle{empty}
+\raggedright
+\setlength{\parindent}{0pt}
+\titleformat{\section}{\vspace{-4pt}\scshape\raggedright\large\bfseries}{}{0em}{}[\titlerule\vspace{-2pt}]
+\titlespacing*{\section}{0pt}{7pt}{4pt}
+\renewcommand{\labelitemi}{\raisebox{0.2ex}{\tiny$\bullet$}}
+\setlist[itemize]{leftmargin=3.2ex,rightmargin=1.5ex,labelsep=1.2mm,itemsep=0.4mm,topsep=0.4mm,parsep=0pt}
+
+%% {Title}{Date}{Organisation}{Location}: title + date on line 1, organisation + location on line 2
+\newcommand{\entry}[4]{\textbf{#1}\hfill\textbf{\footnotesize #2}\\{\footnotesize #3}\hfill{\footnotesize #4}\par\vspace{0.3mm}}
+
+\hypersetup{pdftitle={\VAR{cv.name|e} - CV}, pdfauthor={\VAR{cv.name|e}}, pdfkeywords={\VAR{keywords|join(', ')|e}}}
+
+\begin{document}
+
+%%---------- Heading ----------
+\BLOCK{ if cv.photo }\begin{minipage}[b]{\dimexpr\linewidth-2.8cm\relax}\BLOCK{ endif }
+{\fontsize{24}{28}\selectfont\bfseries \VAR{cv.name|e}}\\[8pt]
+\BLOCK{ if cv.headline }{\normalsize \VAR{cv.headline|e}}\\[4pt]\BLOCK{ endif }
+{\small \VAR{cv.contact.phone|e} \textbar{} \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}} \textbar{} \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin } \textbar{} \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.github } \textbar{} \href{https://\VAR{cv.contact.github}}{\VAR{cv.contact.github|e}}\BLOCK{ endif }}
+\BLOCK{ if cv.contact.work_permit }\\[2pt]{\small \VAR{cv.contact.work_permit|e}}\BLOCK{ endif }
+\BLOCK{ if cv.photo }\end{minipage}\hfill\begin{minipage}[b]{2.35cm}\includegraphics[width=2.3cm]{\VAR{cv.photo}}\end{minipage}\BLOCK{ endif }
+\par\vspace{1mm}
+
+%%---------- Profile ----------
+\BLOCK{ if cv.summary }
+\section{Profile}
+{\small \VAR{cv.summary|md}\par}
+\BLOCK{ endif }
+
+%%---------- Education ----------
+\section{Education}
+\BLOCK{ for ed in cv.education }
+\entry{\VAR{ed.degree|e}}{\VAR{ed.start|e} -- \VAR{ed.end|e}}{\VAR{ed.school|e}}{\VAR{ed.location|e}}
+\BLOCK{ if ed.bullets or ed.details }
+\begin{itemize}\small
+\BLOCK{ if ed.details }  \item \VAR{ed.details|md}
+\BLOCK{ endif }\BLOCK{ for b in ed.bullets }  \item \VAR{b|md}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endif }
+\vspace{0.5mm}
+\BLOCK{ endfor }
+
+%%---------- Experience ----------
+\section{Professional Experience}
+\BLOCK{ for x in cv.experience }
+\entry{\VAR{x.title|e}}{\VAR{x.start|e} -- \VAR{x.end|e}}{\VAR{x.company|e}}{\VAR{x.location|e}}
+\begin{itemize}\small
+\BLOCK{ for b in x.bullets }  \item \VAR{b|md}
+\BLOCK{ endfor }\end{itemize}
+\vspace{0.5mm}
+\BLOCK{ endfor }
+
+%%---------- Projects (optional) ----------
+\BLOCK{ if cv.projects }
+\section{Projects}
+\BLOCK{ for p in cv.projects }
+\textbf{\VAR{p.name|e}}\BLOCK{ if p.tech } -- {\footnotesize \VAR{p.tech|join(', ')|e}}\BLOCK{ endif }\par
+\begin{itemize}\small
+\BLOCK{ for b in p.bullets }  \item \VAR{b|md}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endfor }
+\BLOCK{ endif }
+
+%%---------- Skills ----------
+\section{Skills}
+\begin{itemize}[leftmargin=0pt,label={},itemsep=0.6mm]\small
+\BLOCK{ for group, items in cv.skills.items() }
+  \item \textbf{\VAR{group|e}:} \VAR{items|join(', ')|e}
+\BLOCK{ endfor }
+\BLOCK{ if cv.languages }
+  \item \textbf{Languages:} \BLOCK{ for l in cv.languages }\VAR{l.name|e} (\VAR{l.level|e})\BLOCK{ if not loop.last }, \BLOCK{ endif }\BLOCK{ endfor }
+
+\BLOCK{ endif }
+\BLOCK{ if cv.certifications }
+  \item \textbf{Certification\BLOCK{ if cv.certifications|length > 1 }s\BLOCK{ endif }:} \VAR{cv.certifications|join('; ')|e}
+\BLOCK{ endif }
+\end{itemize}
+
+\end{document}

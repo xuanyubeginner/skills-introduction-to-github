@@ -8,7 +8,7 @@ from pathlib import Path
 
 from . import keywords as kw
 
-SECTIONS = ["summary", "skills", "experience", "education"]
+SECTIONS = [("summary", "profile"), ("skills",), ("experience",), ("education",)]
 
 
 def extract_text(pdf: Path) -> tuple[str, int]:
@@ -33,7 +33,7 @@ def check(pdf: Path, cv: dict, jd_keywords: list[str], lexicon) -> dict:
         "Name found": kw.normalize(cv.get("name", "")) in norm,
         "Email found": bool(contact.get("email")) and contact["email"].lower() in text.lower(),
         "Phone found": bool(contact.get("phone")) and re.sub(r"\D", "", contact["phone"])[-6:] in re.sub(r"\D", "", text),
-        "Standard section headings": all(s in norm for s in SECTIONS),
+        "Standard section headings": all(any(v in norm for v in alts) for alts in SECTIONS),
         "Length <= 2 pages": pages <= 2,
         "No broken ligatures": not re.search("[ﬀ-ﬆ]", text),
     }
