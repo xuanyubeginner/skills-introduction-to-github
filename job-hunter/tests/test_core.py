@@ -161,6 +161,10 @@ def test_compact_section_order_and_personal_line():
                  dict(data, section_order=["profile", "skills", "education", "experience"]), [])
     assert tex.index(r"\section{Education}") < tex.index("Professional Experience")
     assert tex.count(r"\begin{document}") == 1
+    tex = render(ROOT / "templates" / "compact.tex.j2",
+                 dict(data, section_order=["profile", "education", "experience", "skills"]), [])
+    assert tex.index(r"\section{Education}") < tex.index("Professional Experience") < tex.index(r"\section{Skills}")
+    assert "Key Skills" not in tex  # "Key Skills" only when it directly follows the profile
 
 
 def test_fit_params_monotonic_and_drop_order():

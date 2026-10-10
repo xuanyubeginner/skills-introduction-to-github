@@ -52,8 +52,8 @@
 \BLOCK{ endif }
 \BLOCK{ endmacro }
 
-\BLOCK{ macro skills_section() }
-\section{Key Skills}
+\BLOCK{ macro skills_section(title) }
+\section{\VAR{title}}
 \begin{itemize}[leftmargin=0pt,label={},itemsep=\VAR{(0.6 * (f.sp or 1))|round(3)}mm]\bodyfont
 \BLOCK{ for group, items in cv.skills.items() }
   \item \textbf{\VAR{group|e}:} \VAR{items|join(', ')|e}
@@ -140,7 +140,7 @@
 
 \BLOCK{ for s in order }
 \BLOCK{ if s == 'profile' }\VAR{ profile_section() }
-\BLOCK{ elif s == 'skills' }\VAR{ skills_section() }
+\BLOCK{ elif s == 'skills' }\VAR{ skills_section('Key Skills' if loop.index0 > 0 and order[loop.index0 - 1] == 'profile' else 'Skills') }
 \BLOCK{ elif s == 'experience' }\VAR{ experience_section() }
 \BLOCK{ elif s == 'education' }\VAR{ education_section() }
 \BLOCK{ elif s == 'projects' }\VAR{ projects_section() }
