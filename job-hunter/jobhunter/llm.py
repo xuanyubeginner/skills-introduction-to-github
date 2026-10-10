@@ -18,7 +18,7 @@ You rewrite CV content so it matches a job description, under strict honesty rul
 - Only rephrase what is given. You may use the job description's terminology for things the candidate demonstrably did
   (e.g. "dashboards" -> "data visualization"), and you may reorder clauses to lead with impact.
 - Keep every number/metric exactly as given. Start bullets with a strong past-tense action verb. Max ~25 words per bullet.
-- Write in the CV's language (English) unless asked otherwise.
+- Write in the same language as the CV content you are given (English or German).
 - The summary: 2-3 sentences, mention the target role title from the posting if it fits the candidate, and the most relevant true strengths."""
 
 SCHEMA = {

@@ -8,7 +8,8 @@ from pathlib import Path
 
 from . import keywords as kw
 
-SECTIONS = [("summary", "profile"), ("skills",), ("experience",), ("education",)]
+SECTIONS = [("summary", "profil"), ("skills", "kenntnisse"), ("experience", "berufserfahrung"),
+            ("education", "ausbildung")]
 
 
 def extract_text(pdf: Path) -> tuple[str, int]:

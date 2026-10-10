@@ -1,0 +1,154 @@
+%% Deutscher Lebenslauf (tabellarisch, eine Seite), ATS-tauglich.
+%% Same Jinja syntax as the other templates: \VAR{...} values, \BLOCK{...} logic,
+%%   |e escapes LaTeX, |md escapes and turns **text** into bold.
+%% Classic German layout: photo left, dates in a left column, blue headings.
+%% ATS changes compared with a tabularx/fontawesome version:
+%%   - date column built with a list label instead of tabularx -> text extracts as
+%%     "10/2020 - 04/2023 Finanzbuchhalterin China Nuclear ..." in reading order
+%%   - "E-Mail:", "Tel.:", "Adresse:" labels instead of icon glyphs
+%%   - glyphtounicode + cmap, no f-ligatures, no hyphenation (split words break keyword matching)
+\documentclass[a4paper,10pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\IfFileExists{ngerman.ldf}{\usepackage[ngerman]{babel}}{}
+\usepackage{lmodern}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{cmap}
+\input{glyphtounicode}\pdfgentounicode=1
+\usepackage[expansion=false,protrusion=false]{microtype}
+\DisableLigatures[f]{encoding=*, family=*}
+%% Layout knobs. `tailor --pdf` searches these so the CV fills exactly one page (see jobhunter/fit.py).
+\BLOCK{ set f = fit or dict() }
+\usepackage[left=\VAR{f.ml or 1.35}cm,right=\VAR{f.mr or 1.35}cm,top=\VAR{f.mv or 0.9}cm,bottom=\VAR{f.mv or 0.9}cm]{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\newcommand{\bodyfont}{\fontsize{\VAR{f.fs or 9}}{\VAR{f.bs or 11}}\selectfont}
+\newcommand{\metafont}{\fontsize{\VAR{f.ms or 8.5}}{\VAR{f.mbs or 10}}\selectfont}
+\newcommand{\fitsp}[1]{\vspace{\VAR{f.sp or 1}\dimexpr #1\relax}}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\raggedright
+\hyphenpenalty=10000 \exhyphenpenalty=10000
+\definecolor{cvblue}{RGB}{0,102,204}
+\titleformat{\section}{\large\bfseries\color{cvblue}}{}{0pt}{}[\color{cvblue}\titlerule]
+\titlespacing*{\section}{0pt}{\VAR{(7 * (f.sp or 1))|round(2)}pt}{\VAR{(3.5 * (f.sp or 1))|round(2)}pt}
+
+%% Left date/label column. Entries are list items whose label is the date.
+\newlength{\datecol}\setlength{\datecol}{3.3cm}
+\newenvironment{cvlist}{\begin{list}{}{%
+  \setlength{\leftmargin}{\datecol}\setlength{\labelwidth}{\datecol}\setlength{\labelsep}{0pt}%
+  \setlength{\itemsep}{\VAR{(1.6 * (f.sp or 1))|round(3)}mm}\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}%
+  \renewcommand{\makelabel}[1]{\textbf{\metafont ##1}\hfill}}}{\end{list}}
+\setlist[itemize]{leftmargin=1.1em,labelsep=0.5em,itemsep=\VAR{(0.25 * (f.sp or 1))|round(3)}mm,topsep=\VAR{(0.3 * (f.sp or 1))|round(3)}mm,parsep=0pt}
+
+\hypersetup{pdftitle={Lebenslauf \VAR{cv.name|e}}, pdfauthor={\VAR{cv.name|e}}, pdflang={de-DE}, pdfkeywords={\VAR{keywords|join(', ')|e}}}
+
+%%---------- Sections ----------
+\BLOCK{ macro profile_section() }
+\BLOCK{ if cv.summary }
+\section*{Profil}
+{\bodyfont \VAR{cv.summary|md}\par}
+\BLOCK{ endif }
+\BLOCK{ endmacro }
+
+\BLOCK{ macro entry(date, title, org, location, bullets) }
+\item[\VAR{date}] \textbf{\VAR{title}}\\
+{\bodyfont \VAR{org}\BLOCK{ if location }, \VAR{location}\BLOCK{ endif }}
+\BLOCK{ if bullets }
+\begin{itemize}\bodyfont
+\BLOCK{ for b in bullets }  \item \VAR{b|md}
+\BLOCK{ endfor }\end{itemize}
+\BLOCK{ endif }
+\BLOCK{ endmacro }
+
+\BLOCK{ macro experience_section() }
+\section*{Berufserfahrung}
+\begin{cvlist}
+\BLOCK{ for x in cv.experience }
+\VAR{ entry((x.start|e) ~ ' -- ' ~ (x.end|e), x.title|e, x.company|e, x.location|e, x.bullets) }
+\BLOCK{ endfor }
+\end{cvlist}
+\BLOCK{ endmacro }
+
+\BLOCK{ macro education_section() }
+\section*{Ausbildung}
+\begin{cvlist}
+\BLOCK{ for ed in cv.education }
+\VAR{ entry((ed.start|e) ~ ' -- ' ~ (ed.end|e), ed.degree|e, ed.school|e, ed.location|e, ([ed.details] if ed.details else []) + (ed.bullets or [])) }
+\BLOCK{ endfor }
+\end{cvlist}
+\BLOCK{ endmacro }
+
+\BLOCK{ macro projects_section() }
+\BLOCK{ if cv.projects }
+\section*{Projekte}
+\begin{cvlist}
+\BLOCK{ for p in cv.projects }
+\VAR{ entry(p.date|e if p.date else '', p.name|e, p.tech|join(', ')|e if p.tech else '', '', p.bullets) }
+\BLOCK{ endfor }
+\end{cvlist}
+\BLOCK{ endif }
+\BLOCK{ endmacro }
+
+\BLOCK{ macro skills_section() }
+\section*{Kenntnisse und Interessen}
+\begin{cvlist}\bodyfont
+\BLOCK{ if cv.languages }
+\item[Sprachkenntnisse] \BLOCK{ for l in cv.languages }\VAR{l.name|e} (\VAR{l.level|e})\BLOCK{ if not loop.last }\\ \BLOCK{ endif }\BLOCK{ endfor }
+
+\BLOCK{ endif }
+\BLOCK{ for group, items in cv.skills.items() }
+\item[\VAR{group|e}] \VAR{items|map('e')|join('\\\\ ')}
+
+\BLOCK{ endfor }
+\BLOCK{ if cv.certifications }
+\item[Zertifikate] \VAR{cv.certifications|map('e')|join('\\\\ ')}
+
+\BLOCK{ endif }
+\BLOCK{ if cv.interests }
+\item[Interessen] \VAR{cv.interests|map('e')|join(', ')}
+
+\BLOCK{ endif }
+\end{cvlist}
+\BLOCK{ endmacro }
+
+\begin{document}
+
+%%---------- Kopf: Foto links, Name + Kontakt rechts; Foto so hoch wie der Textblock ----------
+\BLOCK{ set order = cv.section_order or ['profile', 'experience', 'education', 'skills', 'projects'] }
+\newsavebox{\headbox}\newlength{\photoh}
+\savebox{\headbox}{\begin{minipage}[t]{\dimexpr\linewidth-\datecol\relax}\vspace{0pt}
+{\fontsize{25}{28}\selectfont\bfseries \VAR{cv.name|e}\par}\vspace{1mm}
+\BLOCK{ if cv.headline }{\large \VAR{cv.headline|e}\par}\vspace{1.5mm}\BLOCK{ endif }
+{\bodyfont
+E-Mail: \href{mailto:\VAR{cv.contact.email}}{\VAR{cv.contact.email|e}}\\[0.6mm]
+Tel.: \VAR{cv.contact.phone|e}\\[0.6mm]
+Adresse: \VAR{cv.contact.location|e}\BLOCK{ if cv.contact.linkedin }\\[0.6mm]
+LinkedIn: \href{https://\VAR{cv.contact.linkedin}}{\VAR{cv.contact.linkedin|e}}\BLOCK{ endif }\BLOCK{ if cv.contact.birth_date }\\[0.6mm]
+Geburtsdatum: \VAR{cv.contact.birth_date|e}\BLOCK{ endif }\BLOCK{ if cv.contact.work_permit }\\[0.6mm]
+\VAR{cv.contact.work_permit|e}\BLOCK{ endif }\par}
+\end{minipage}}
+\setlength{\photoh}{\dimexpr\ht\headbox+\dp\headbox\relax}
+\BLOCK{ if cv.photo }
+\begin{minipage}[t]{\datecol}\vspace{0pt}\includegraphics[height=\photoh,width=\dimexpr\datecol-0.45cm\relax,keepaspectratio]{\VAR{cv.photo}}\end{minipage}%
+\BLOCK{ else }
+\hspace*{\datecol}%
+\BLOCK{ endif }
+\usebox{\headbox}
+\par\fitsp{3mm}
+
+\BLOCK{ for s in order }
+\BLOCK{ if s == 'profile' }\VAR{ profile_section() }
+\BLOCK{ elif s == 'skills' }\VAR{ skills_section() }
+\BLOCK{ elif s == 'experience' }\VAR{ experience_section() }
+\BLOCK{ elif s == 'education' }\VAR{ education_section() }
+\BLOCK{ elif s == 'projects' }\VAR{ projects_section() }
+\BLOCK{ endif }
+\BLOCK{ endfor }
+
+\par\typeout{JOBHUNTER-FILL \the\pagetotal\space\the\pagegoal}
+\end{document}

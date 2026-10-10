@@ -127,6 +127,9 @@ def slugify(s: str) -> str:
 
 def cmd_tailor(a):
     cfg, prof, db = ctx()
+    lang = a.lang or "en"
+    if lang != "en":  # e.g. profile.de.yaml + templates/de.tex.j2 for German applications
+        prof = Profile(load_yaml(f"profile.{lang}.yaml"))
     job = score_job(db.get_job(a.id), prof)
     cv, rep = tailor.tailor(prof, job, max_bullets=a.max_bullets, max_projects=a.max_projects)
     if a.education_first:
@@ -146,9 +149,14 @@ def cmd_tailor(a):
             print(note)
     outdir = ROOT / "output" / f"{date.today():%Y%m%d}_{slugify(job.company or 'company')}_{slugify(job.title)}"
     outdir.mkdir(parents=True, exist_ok=True)
-    name = slugify(prof.data.get("name", "CV")) + "_CV"
+    name = slugify(prof.data.get("name", "CV")) + {"de": "_Lebenslauf"}.get(lang, "_CV")
+    sfx = "" if lang == "en" else f"_{lang}"
     tex = outdir / f"{name}.tex"
-    template = Path(a.template or (cfg.get("tailor") or {}).get("template") or ROOT / "templates" / "cv.tex.j2")
+    tcfg = cfg.get("tailor") or {}
+    if lang == "en":
+        template = Path(a.template or tcfg.get("template") or ROOT / "templates" / "cv.tex.j2")
+    else:
+        template = Path(a.template or (tcfg.get("templates") or {}).get(lang) or ROOT / "templates" / f"{lang}.tex.j2")
     photo = cv.get("photo")
     if photo:
         src = (ROOT / photo) if not Path(photo).is_absolute() else Path(photo)
@@ -186,12 +194,12 @@ def cmd_tailor(a):
             pdf = latex.compile_pdf(tex)
         ats_res = ats.check(pdf, cv, rep["jd_keywords"], prof.lexicon)
         print(f"PDF: {pdf}")
-    (outdir / "tailored_profile.yaml").write_text(yaml.safe_dump(cv, allow_unicode=True, sort_keys=False), encoding="utf-8")
+    (outdir / f"tailored_profile{sfx}.yaml").write_text(yaml.safe_dump(cv, allow_unicode=True, sort_keys=False), encoding="utf-8")
     report = ats.report_markdown(job.to_dict(), rep, ats_res, note)
     if layout:
         report += "\n## Layout\n" + layout + "\n"
-    (outdir / "ats_report.md").write_text(report, encoding="utf-8")
-    print(f"LaTeX: {tex}\nReport: {outdir / 'ats_report.md'}")
+    (outdir / f"ats_report{sfx}.md").write_text(report, encoding="utf-8")
+    print(f"LaTeX: {tex}\nReport: {outdir / f'ats_report{sfx}.md'}")
     print(f"JD keyword coverage: {rep['coverage']}%  | missing: {', '.join(rep['missing'][:10]) or '-'}")
     if ats_res:
         bad = [k for k, ok in ats_res["checks"].items() if not ok]
@@ -286,6 +294,7 @@ def main(argv=None):
     s.add_argument("--pdf", action="store_true", help="compile to PDF and run ATS checks on the PDF text")
     s.add_argument("--llm", action="store_true", help="let Claude rephrase summary/bullets (needs ANTHROPIC_API_KEY)")
     s.add_argument("--template", help="path to your own Jinja-LaTeX template")
+    s.add_argument("--lang", choices=["en", "de"], help="de = German CV from profile.de.yaml + templates/de.tex.j2")
     s.add_argument("--pages", type=int, help="exact page count for the PDF (default 1, or tailor.pages in config)")
     s.add_argument("--no-fit", action="store_true", help="don't auto-adjust font/spacing to the page count")
     s.add_argument("--education-first", action="store_true",

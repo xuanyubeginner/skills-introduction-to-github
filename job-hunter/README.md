@@ -154,6 +154,29 @@ It replaces the usual `tabular` layouts and fontawesome icons with plain text, s
 - Keep `\input{glyphtounicode}\pdfgentounicode=1`.
 - If you need Chinese/CJK characters, use XeLaTeX (`latexmk -xelatex`) and `fontspec`.
 
+## 5b. German CV (Lebenslauf) for German companies
+
+1. Create `profile.de.yaml` next to `profile.yaml`. It uses the same structure, written in German:
+   - `languages` uses names like `Deutsch` / `Englisch` and levels like `Muttersprache` / `fließend` / `B2`.
+   - Each item in a `skills` group prints on its own line.
+   - `interests:` is optional.
+2. Generate it with:
+
+   ```bash
+   python -m jobhunter tailor <ID> --pdf --lang de
+   ```
+
+   This writes `Name_Lebenslauf.pdf` and `ats_report_de.md` next to the English CV in the same job folder.
+
+`templates/de.tex.j2` is the classic tabular German layout:
+
+- photo on the left;
+- blue section headings;
+- dates in a left column;
+- sections Profil → Berufserfahrung → Ausbildung → Kenntnisse und Interessen.
+
+It is built without `tabularx`, icon fonts or hyphenation, so an ATS reads it in the right order.
+
 ## 6. Sources and compliance
 
 | Source | Coverage | Key | Notes |

@@ -4,7 +4,10 @@ from __future__ import annotations
 from . import keywords as kw
 from .models import Job
 
-LEVELS = {"a1": 1, "a2": 2, "b1": 3, "b2": 4, "c1": 5, "c2": 6, "native": 7, "muttersprache": 7, "fluent": 5}
+LEVELS = {"a1": 1, "a2": 2, "b1": 3, "b2": 4, "c1": 5, "c2": 6, "native": 7, "muttersprache": 7,
+          "fluent": 5, "fliessend": 5, "verhandlungssicher": 5}
+LANG_NAMES = {"german": {"german", "deutsch"}, "english": {"english", "englisch"},
+              "french": {"french", "franzoesisch", "francais"}}
 
 
 class Profile:
@@ -34,9 +37,10 @@ class Profile:
         return "\n".join(str(p) for p in parts if p)
 
     def language_level(self, name: str) -> int:
+        names = LANG_NAMES.get(name.lower(), {name.lower()})
         for lang in self.data.get("languages", []):
-            if lang["name"].lower() == name.lower():
-                return LEVELS.get(str(lang.get("level", "")).lower(), 0)
+            if kw.normalize(lang["name"]).strip() in names:
+                return LEVELS.get(kw.normalize(str(lang.get("level", ""))).strip(), 0)
         return 0
 
     @property

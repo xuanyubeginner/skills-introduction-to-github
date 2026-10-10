@@ -80,7 +80,7 @@ def find_skills(text: str, lexicon: dict[str, list[str]]) -> dict[str, int]:
 
 GERMAN_REQUIRED = re.compile(
     r"(fliessend\w* deutsch|verhandlungssicher\w* deutsch|deutsch\w* (auf )?(c1|c2|muttersprach)|"
-    r"(sehr )?gute\w* deutschkenntnisse|fluent (in )?german|german \(?(c1|c2|fluent|native)|"
+    r"sehr gute\w* deutschkenntnisse|fluent (in )?german|german \(?(c1|c2|fluent|native)|"
     r"business[- ]fluent german|excellent german)"
 )
 FRENCH_REQUIRED = re.compile(

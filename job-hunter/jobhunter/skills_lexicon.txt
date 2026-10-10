@@ -15,11 +15,11 @@ MATLAB
 Scala
 Bash = shell scripting, linux shell
 Git = github, gitlab, version control, versionskontrolle
-Excel = microsoft excel, ms excel, advanced excel, vba, pivot tables, pivottables, pivot, xlookup, vlookup, sverweis
+Excel = microsoft excel, ms excel, advanced excel, vba, pivot tables, pivottables, pivot, xlookup, vlookup, sverweis, xverweis
 Power BI = powerbi, power-bi, dax
 Tableau
 Looker
-SAP = sap erp, s/4hana, s4hana, sap fi, sap co, sap mm, sap sd
+SAP = sap erp, s/4hana, s4hana, sap fi, sap co, sap mm, sap sd, sap fi co, sap fi&co, sap fico
 Salesforce
 Jira = confluence
 Data Analysis = data analytics, data analyst, datenanalyse, analyse de donnees, analytics
@@ -56,8 +56,8 @@ Process Optimization = prozessoptimierung, process improvement, lean, six sigma,
 Supply Chain = supply chain management, logistik, logistics, procurement, einkauf, beschaffung
 Controlling = controller, financial controlling, management reporting, management accounting, cost accounting, kostenrechnung, controle de gestion
 Financial Analysis = finanzanalyse, financial modelling, financial modeling, valuation, bewertung
-Accounting = accountant, buchhaltung, buchhalter, finanzbuchhaltung, rechnungswesen, comptabilite, comptable, general ledger, hauptbuch
-IFRS = us gaap, hgb, lux gaap, accounting standards, rechnungslegung
+Accounting = accountant, buchhaltung, buchhalter, finanzbuchhaltung, rechnungswesen, comptabilite, comptable, general ledger, hauptbuch, finanzbuchhalterin, kontierung, verbuchung, buchungsvorgaenge, buchhaltung, rechnungslegung
+IFRS/HGB = ifrs, us gaap, hgb, lux gaap, accounting standards, rechnungslegung
 Audit = auditing, wirtschaftspruefung, revision, internal audit
 Risk Management = risikomanagement, gestion des risques, compliance
 Banking = banking industry, fund administration, fondsverwaltung, asset management, investment funds
@@ -67,18 +67,18 @@ Sales = vertrieb, business development, key account management
 CRM = customer relationship management, hubspot
 Consulting = beratung, conseil, unternehmensberatung
 Strategy = strategie, strategic planning, corporate strategy
-Reporting = berichtswesen, kpi, kpis, kpi reporting
+Reporting = berichtswesen, kpi, kpis, kpi reporting, reportings, auswertungen
 Stakeholder Management = stakeholder, stakeholder communication
 ESG = sustainability, nachhaltigkeit, csr
 
 # --- finance & accounting detail (useful for Controlling / FP&A / Accountant roles)
 Financial Reporting = financial statements, financial reports, jahresabschluss, monatsabschluss, reporting financier, etats financiers
-Month-end Closing = month-end close, monthly closing, year-end closing, abschlusserstellung, cloture
-Budgeting = budget, budgets, budgetierung, budgetplanung, forecast, forecasting, forecasts, finanzplanung, fp&a, financial planning
+Month-end Closing = month-end close, monthly closing, year-end closing, abschlusserstellung, cloture, monatsabschluesse, monatsabschluss, jahresabschluesse, monatsabschluessen, jahresabschluessen
+Budgeting = budget, budgets, budgetierung, budgetplanung, forecast, forecasting, forecasts, finanzplanung, fp&a, financial planning, budgetueberwachung, budgetkontrolle
 Variance Analysis = variance analyses, abweichungsanalyse, plan-ist-vergleich, budget vs actual, ecarts
-Cash Management = treasury, liquidity management, liquiditaetsplanung, liquiditaetsmanagement, cash forecast, cash forecasts, cash flow, tresorerie
-Reconciliation = reconciliations, bank reconciliation, reconciled, kontenabstimmung, rapprochement
-Accounts Payable = kreditorenbuchhaltung, kreditoren, purchase-to-pay, p2p
+Cash Management = treasury, liquidity management, liquiditaetsplanung, liquiditaetsmanagement, cash forecast, cash forecasts, cash flow, tresorerie, zahlungsverkehr, kassenfuehrung
+Reconciliation = reconciliations, bank reconciliation, reconciled, kontenabstimmung, rapprochement, kontenabstimmungen, bankabstimmung, bankabstimmungen
+Accounts Payable = kreditorenbuchhaltung, kreditoren, purchase-to-pay, p2p, rechnungspruefung, eingangsrechnungen
 Accounts Receivable = debitorenbuchhaltung, debitoren, order-to-cash, o2c, receivables
 Tax = taxes, tax filings, tax compliance, steuern, steuererklaerungen, umsatzsteuer, vat, fiscalite
 ERP = erp system, erp systems, datev, oracle financials, microsoft dynamics
@@ -103,4 +103,4 @@ German = deutsch, allemand, deutschkenntnisse
 French = franzoesisch, francais
 Chinese = mandarin, chinesisch, chinois
 Luxembourgish = luxemburgisch, luxembourgeois
-MS Office = microsoft office, office 365, powerpoint, ms word
+MS Office = microsoft office, office 365, powerpoint, ms word, ms-office

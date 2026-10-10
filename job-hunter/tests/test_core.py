@@ -203,3 +203,42 @@ def test_compact_photo_header_keeps_profile_below():
     assert tex.index(r"\includegraphics") < tex.index(r"\section{Profile}") < tex.index(r"\section{Key Skills}")
     tex = render(ROOT / "templates" / "compact.tex.j2", dict(PROFILE.data), [])
     assert tex.count(r"\section{Profile}") == 1 and "includegraphics" not in tex
+
+
+DE_PROFILE = {
+    "name": "Max Muster", "headline": "Finanzbuchhalter",
+    "contact": {"email": "max@example.de", "phone": "+49 151 1234567", "location": "Musterweg 1, 54290 Trier"},
+    "summary": "Finanzbuchhalter mit Erfahrung in Kontierung & Kontenabstimmung.",
+    "experience": [{"title": "Finanzbuchhalter", "company": "Muster GmbH", "location": "Trier", "start": "01/2020",
+                    "end": "heute", "bullets": ["Prüfung, Kontierung und Verbuchung von Rechnungen.",
+                                                "Unterstützung bei Monatsabschlüssen nach HGB."]}],
+    "education": [{"degree": "B.A. BWL", "school": "Universität Trier", "location": "Trier", "start": "2016",
+                   "end": "2019", "bullets": ["**Schwerpunkt:** Rechnungswesen"]}],
+    "languages": [{"name": "Deutsch", "level": "Muttersprache"}, {"name": "Englisch", "level": "fließend"}],
+    "skills": {"EDV-Kenntnisse": ["SAP FI&CO", "MS Office"]},
+    "certifications": ["CFA Level I"], "interests": ["Volleyball"],
+}
+
+
+def test_german_template_and_language_rules():
+    tex = render(ROOT / "templates" / "de.tex.j2", DE_PROFILE, [])
+    for heading in ("Profil", "Berufserfahrung", "Ausbildung", "Kenntnisse und Interessen"):
+        assert r"\section*{" + heading + "}" in tex
+    assert tex.index("Berufserfahrung") < tex.index("Ausbildung")      # German default order
+    assert r"\item[01/2020 -- heute] \textbf{Finanzbuchhalter}" in tex
+    assert r"SAP FI\&CO\\ MS Office" in tex and r"\textbf{Schwerpunkt:}" in tex
+    assert r"E-Mail: " in tex and "faEnvelope" not in tex and "tabularx" not in tex
+    assert r"\VAR" not in tex and r"\BLOCK" not in tex
+    p = Profile(DE_PROFILE)
+    assert p.language_level("German") == 7 and p.language_level("English") == 5
+    assert not kw.GERMAN_REQUIRED.search(kw.normalize("gute Deutschkenntnisse"))
+    assert kw.GERMAN_REQUIRED.search(kw.normalize("sehr gute Deutschkenntnisse in Wort und Schrift"))
+
+
+@pytest.mark.skipif(not (_shutil.which("latexmk") or _shutil.which("pdflatex")), reason="needs LaTeX")
+def test_german_cv_fits_one_page_and_passes_ats(tmp_path):
+    from jobhunter import ats, fit
+    p = Profile(DE_PROFILE)
+    pdf, info = fit.fit_to_pages(ROOT / "templates" / "de.tex.j2", dict(DE_PROFILE), [], tmp_path / "lebenslauf.tex")
+    res = ats.check(pdf, DE_PROFILE, ["Accounting", "SAP"], p.lexicon)
+    assert info["pages"] == 1 and all(res["checks"].values()), res["checks"]
